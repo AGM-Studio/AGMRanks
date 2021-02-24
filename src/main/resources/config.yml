@@ -1,0 +1,46 @@
+######################################################################
+#   ______    _________________________     ______          ______   #
+#  |      \   \                        |   |      \        /      |  #
+#  |       \   \    ___________________|   |       \      /       |  #
+#  |   |\   \   \   \                      |   |\   \    /   /|   |  #
+#  |   | \   \   \   \                     |   | \   \  /   / |   |  #
+#  |   |__\   \   \   \     ___________    |   |  \   \/   /  |   |  #
+#  |           \   \   \    \          |   |   |   \      /   |   |  #
+#  |    ____    \   \   \    \_____    |   |   |    \____/    |   |  #
+#  |   |    \    \   \   \         |   |   |   |              |   |  #
+#  |   |     \    \   \   \________|   |   |   |              |   |  #
+#  |   |      \    \   \               |   |   |              |   |  #
+#  |___|       \____\   \______________|   |___|              |___|  #
+#                                                                    #
+######################################################################
+#  AGM Ranks                                                         #
+#  Website: https://agmdev.xyz/                                      #
+#  Discord: https://agmdev.xyz/discord                               #
+#  Wiki: https://github.com/Ashengaurd/AGMRanks/wiki/                #
+######################################################################
+
+Prefix: AGMRanks
+CheckUpdates: true
+
+RankingSystem:
+  Type: Money
+  UseExperienceOnRanking: true
+  AutoRankup: true
+  AutoRankupTaskTimer: 60
+  SellRanksForMoney: false
+  PaybackOnSell: 50.0
+
+Debug:
+  Enable: false
+  General: true
+  Ranks: true
+  Users: true
+  GUI: true
+  Vault: true
+  PlaceholderAPI: true
+  Command: true
+
+InGameMessages:
+  Info: true
+  Debug: true
+  Warning: true

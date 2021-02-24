@@ -1,0 +1,40 @@
+name: AGMRanks
+version: ${project.version}
+main: me.ashenguard.agmranks.AGMRanks
+softdepend: [Vault, PlaceholderAPI, AGMCore]
+authors: [Ashenguard]
+description: GUI Rankup, Best in its own
+commands:
+  ranks:
+    description: Player command to access the GUI
+    aliases: [rank, rankup]
+  agmranks:
+    description: Admin command to access the admin GUI
+    permission: AGMRanks.admin
+    permission-message: You don't have enough permissions to access this command
+permissions:
+  AGMRanks.*:
+    description: All perms
+    default: op
+    children:
+      - AGMRanks.admin
+      - AGMranks.Messages.*
+  AGMRanks.admin:
+    description: AGMRanks command permission
+    default: op
+  AGMRanks.Messages.*:
+    description: All messages perms
+    default: op
+    children:
+      - AGMranks.Messages.Info
+      - AGMranks.Messages.Warning
+      - AGMranks.Messages.Debug
+  AGMRanks.Messages.Info:
+    description: Allows in game Info messages
+    default: op
+  AGMRanks.Messages.Warning:
+    description: Allows in game Warning messages
+    default: op
+  AGMRanks.Messages.Debug:
+    description: Allows in game Debug messages
+    default: op
