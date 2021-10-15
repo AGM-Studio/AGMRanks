@@ -5,7 +5,8 @@ import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.agmranks.ranks.systems.RankingSystem;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.messenger.Messenger;
-import me.ashenguard.lib.PlaytimeManager;
+import me.ashenguard.lib.events.agmranks.RankUpEvent;
+import me.ashenguard.lib.statistics.Playtime;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -32,7 +33,7 @@ public class User {
     private int highestRank;
 
     public long getPlaytime() {
-        return PlaytimeManager.getPlaytime(player);
+        return Playtime.getPlaytime(player);
     }
     public double getExperience() {
         return config.getDouble("Experience", 0);
@@ -62,7 +63,7 @@ public class User {
     public User(OfflinePlayer player) {
         this.player = player;
 
-        config = new Configuration(plugin, String.format("Users/%s.yml", player.getUniqueId()), "Examples/user.yml", (string -> string.replace("NAME", player.getName()).replace("JOIN", String.format("\"%s\"", DATE_FORMAT.format(new Date())))));
+        config = new Configuration(plugin, String.format("Users/%s.yml", player.getUniqueId()), "Examples/user.yml", (string -> string.replace("NAME", String.valueOf(player.getName())).replace("JOIN", String.format("\"%s\"", DATE_FORMAT.format(new Date())))));
         config.loadConfig();
 
         this.rank = config.getInt("Rank", -1);
@@ -90,8 +91,10 @@ public class User {
                 temp = temp.getNext();
             }
         }
-
         double cost = system.getCost(this, rank);
+        RankUpEvent event = new RankUpEvent(this, current, rank, cost);
+
+
         system.payCost(this, cost);
 
         this.changePermissionGroup(rank);

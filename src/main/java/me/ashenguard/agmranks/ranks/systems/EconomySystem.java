@@ -3,12 +3,10 @@ package me.ashenguard.agmranks.ranks.systems;
 import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.agmranks.users.User;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class EconomySystem extends RankingSystem {
-    private static final List<String> names = Collections.unmodifiableList(Arrays.asList("Economy", "Money"));
+    private static final List<String> names = List.of("Economy", "Money");
     public static boolean isType(String type) {
         for (String name: names) if (name.equalsIgnoreCase(type)) return true;
         return false;

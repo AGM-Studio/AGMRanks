@@ -6,14 +6,14 @@
 
     <groupId>me.ashenguard</groupId>
     <artifactId>AGMRanks</artifactId>
-    <version>4.0.1</version>
+    <version>4.1.0</version>
     <packaging>jar</packaging>
 
     <name>AGMRanks</name>
 
     <description>GUI Rankup, Best in its own</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>${java.version}</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -26,14 +26,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0-SNAPSHOT</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
@@ -45,18 +45,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>me.ashenguard.agmranks.Panel</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -88,27 +76,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.Ashengaurd</groupId>
-            <artifactId>SpigotApplication</artifactId>
-            <version>1.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.ashenguard</groupId>
+            <groupId>xyz.agmdev</groupId>
             <artifactId>AGMCore</artifactId>
-            <version>2.0</version>
+            <version>3.0.11</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -120,7 +102,7 @@
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.10.9</version>
+            <version>2.10.10</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

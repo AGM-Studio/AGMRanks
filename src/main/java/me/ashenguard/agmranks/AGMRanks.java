@@ -9,8 +9,10 @@ import me.ashenguard.api.gui.GUI;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public final class AGMRanks extends SpigotPlugin {
     private static AGMRanks instance = null;
@@ -40,6 +42,11 @@ public final class AGMRanks extends SpigotPlugin {
     public Vault vault = null;
 
     @Override
+    public @NotNull List<String> getRequirements() {
+        return Collections.singletonList("AGMCore");
+    }
+
+    @Override
     public int getBStatsID() {
         return 7704;
     }
@@ -49,50 +56,27 @@ public final class AGMRanks extends SpigotPlugin {
         return 75787;
     }
 
-    public void loadPlugin() {
-        saveDefaultConfig();
-        reloadConfig();
-
-        updateNotification = getConfig().getBoolean("Check.PluginUpdates", true);
+    @Override
+    public void onPluginEnable() {
+        instance = this;
 
         vault = new Vault();
         rankManager = new RankManager();
         userManager = new UserManager();
         GUI = new GUI(this);
         rankManager.loadRanks();
-    }
-
-    @Override
-    public void onEnable() {
-        instance = this;
-
-        if (getServer().getPluginManager().getPlugin("AGMCore") == null) {
-            messenger.Warning("AGMCore is not installed. Disabling plugin...");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        File pluginFolder = getDataFolder();
-        if (!pluginFolder.exists() && pluginFolder.mkdirs()) messenger.Debug("General", "Plugin folder wasn't found, A new one created");
-        if (isLegacy()) messenger.Debug("General", "Legacy version detected");
-
-        loadPlugin();
 
         if (PHManager.enable) new Placeholders().register();
-        messenger.Info("Plugin has been enabled successfully");
 
-        // ---- Setup data ---- //
         new CommandAGMRanks();
         new CommandRanks();
 
-        // ---- Login all players ---- //
         for (User user: UserManager.getOnlineUsers()) user.login();
     }
 
     @Override
-    public void onDisable() {
+    public void onPluginDisable() {
         if (GUI != null) GUI.closeAll();
         for (User user: UserManager.getOnlineUsers()) user.logout();
-        messenger.Info("Plugin has been disabled");
     }
 }

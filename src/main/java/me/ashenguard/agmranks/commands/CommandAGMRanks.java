@@ -41,7 +41,7 @@ public class CommandAGMRanks extends AdvancedCommand {
         }
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-            AGMRanks.getInstance().loadPlugin();
+            plugin.reload();
             messenger.send(sender, "Plugin has been reloaded");
         }
 

@@ -5,7 +5,7 @@
 #  Wiki: https://github.com/Ashengaurd/AGMRanks/wiki                  #
 #######################################################################
 
-Group: Rank1
+Group: default
 Name: '&6Rank &51'
 Items:
   Active:

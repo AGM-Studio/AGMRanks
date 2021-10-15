@@ -4,12 +4,10 @@ import me.ashenguard.agmranks.users.User;
 import me.ashenguard.api.Configuration;
 import org.bukkit.Bukkit;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class ExperienceSystem extends RankingSystem {
-    private static final List<String> names = Collections.unmodifiableList(Arrays.asList("EXP", "Experience"));
+    private static final List<String> names = List.of("EXP", "Experience");
     public static boolean isType(String type) {
         for (String name: names) if (name.equalsIgnoreCase(type)) return true;
         return false;

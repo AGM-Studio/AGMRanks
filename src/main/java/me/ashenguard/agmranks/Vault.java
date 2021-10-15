@@ -7,6 +7,8 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.Arrays;
+
 import static org.bukkit.Bukkit.getServer;
 
 @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "unused", "FieldCanBeLocal"})
@@ -55,19 +57,19 @@ public class Vault {
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) return false;
         economy = rsp.getProvider();
-        return economy != null;
+        return true;
     }
     private boolean setupChat() {
         RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
         if (rsp == null) return false;
         chat = rsp.getProvider();
-        return chat != null;
+        return true;
     }
     private boolean setupPermissions() {
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
         if (rsp == null) return false;
         permission = rsp.getProvider();
-        return permission != null;
+        return true;
     }
 
     public void addPlayerGroup(OfflinePlayer player, String group) {
@@ -92,5 +94,9 @@ public class Vault {
     public void depositPlayerMoney(OfflinePlayer player, double amount) {
         economy.depositPlayer(player, amount);
         messenger.Debug("Vault", "Player got some money", "Player= §6" + player.getName(), "Money= §6" + amount, "New Balance= §6" + (int) getPlayerBalance(player));
+    }
+
+    public boolean playerGroupExists(String group) {
+        return Arrays.stream(permission.getGroups()).toList().contains(group.toLowerCase());
     }
 }

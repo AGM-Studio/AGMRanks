@@ -50,6 +50,8 @@ public class AdminGUI extends GUIInventory {
         for (int i = 0; i < 9; i++)
             inventory.setItem(i, GUI.getItemStack(null, Items.Admin.TopBorder));
 
+        inventory.setItem(4, GUI.getItemStack(player, Items.Admin.Rank));
+
         for (int i = 18; i < 27; i++)
             inventory.setItem(i, GUI.getItemStack(null, Items.Admin.MiddleBorder));
 

@@ -1,6 +1,7 @@
 package me.ashenguard.agmranks.ranks;
 
 import me.ashenguard.agmranks.AGMRanks;
+import me.ashenguard.agmranks.Vault;
 import me.ashenguard.agmranks.ranks.systems.EconomySystem;
 import me.ashenguard.agmranks.ranks.systems.ExperienceSystem;
 import me.ashenguard.agmranks.ranks.systems.PlaytimeSystem;
@@ -9,7 +10,9 @@ import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.utils.encoding.Ordinal;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class RankManager {
     private final AGMRanks plugin = AGMRanks.getInstance();
@@ -33,19 +36,30 @@ public class RankManager {
 
     private LinkedHashMap<Integer, Rank> ranks = new LinkedHashMap<>();
     public void loadRanks() {
-        ranks = new LinkedHashMap<>();
+        Vault vault = AGMRanks.getVault();
+        List<Rank> tempRanks = new ArrayList<>();
+        boolean safe = true;
 
         for (int id = 1; isRankDefined(id); id++) {
             Rank temp = new Rank(id);
-            saveRank(temp);
+            if (!vault.playerGroupExists(temp.group)) {
+                safe = false;
+                messenger.Warning("Following Rank is linked to unknown permission group. Ranks will not be loaded until you fix this issue.",
+                        "Rank= §6" + Ordinal.to(id), "Group= §6" + temp.group);
+            }
+            tempRanks.add(temp);
         }
+
+        if (!safe) return;
+        ranks = new LinkedHashMap<>();
+        tempRanks.forEach(this::saveRank);
 
         messenger.Debug("Ranks", "All Ranks has been loaded", "Ranks Count= §6" + ranks.size());
     }
 
     public void saveRank(Rank rank) {
         if (ranks.containsKey(rank.id)) return;
-        ranks.putIfAbsent(rank.id, rank);
+        ranks.put(rank.id, rank);
         messenger.Debug("Ranks", "Rank has been loaded", "Rank= §6" + Ordinal.to(rank.id), "Group= §6" + rank.group, "Name= §6" + rank.getTranslatedName(), "Cost= §6" + rank.cost);
     }
 

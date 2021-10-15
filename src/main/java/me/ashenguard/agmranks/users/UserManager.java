@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class UserManager implements Listener {
     private static final AGMRanks plugin = AGMRanks.getInstance();
     private static final Messenger messenger = AGMRanks.getMessenger();

@@ -52,12 +52,11 @@ public class RankUpGUI extends GUIInventory {
         if (slot == 22) {                   // RankUP
             User user = UserManager.getUser(player);
             Rank current = user.getRank();
-            Rank target;
-            switch (clickType) {
-                case LEFT: target = current.getNext(); break;
-                case RIGHT: target = user.getBestAvailableRank(); break;
-                default: target = current;
-            }
+            Rank target = switch (clickType) {
+                case LEFT -> current.getNext();
+                case RIGHT -> user.getBestAvailableRank();
+                default -> current;
+            };
             new RankGUI(player, target, this).show();
         } else if (slot == 18) {            // Left
             this.left();
@@ -100,6 +99,7 @@ public class RankUpGUI extends GUIInventory {
         return rankLine.get(slot%9 + 9);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static String getTitle() {
         return PHManager.translate(AGMRanks.getGUI().config.getString("RankUP.Title"));
     }

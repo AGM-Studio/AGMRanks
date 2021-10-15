@@ -3,11 +3,10 @@ package me.ashenguard.agmranks.ranks.systems;
 import me.ashenguard.agmranks.users.User;
 import org.bukkit.Bukkit;
 
-import java.util.Collections;
 import java.util.List;
 
 public class PlaytimeSystem extends RankingSystem {
-    private static final List<String> names = Collections.unmodifiableList(Collections.singletonList("Playtime"));
+    private static final List<String> names = List.of("Playtime");
     public static boolean isType(String type) {
         for (String name: names) if (name.equalsIgnoreCase(type)) return true;
         return false;
