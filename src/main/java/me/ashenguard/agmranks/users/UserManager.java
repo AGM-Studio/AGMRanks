@@ -56,10 +56,10 @@ public class UserManager implements Listener {
     }
 
     @EventHandler public void onJoin(PlayerJoinEvent event) {
-        getUser(event.getPlayer()).login();
+        if (AGMRanks.areRanksLoaded()) getUser(event.getPlayer()).login();
     }
 
     @EventHandler public void onLeave(PlayerQuitEvent event) {
-        getUser(event.getPlayer()).logout();
+        if (AGMRanks.areRanksLoaded()) getUser(event.getPlayer()).logout();
     }
 }

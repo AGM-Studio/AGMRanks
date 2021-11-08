@@ -8,8 +8,6 @@ import me.ashenguard.agmranks.ranks.systems.PlaytimeSystem;
 import me.ashenguard.agmranks.ranks.systems.RankingSystem;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.utils.encoding.Ordinal;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ public class RankManager {
     }
 
     private LinkedHashMap<Integer, Rank> ranks = new LinkedHashMap<>();
-    public void loadRanks() {
+    public boolean loadRanks() {
         Vault vault = AGMRanks.getVault();
         List<Rank> tempRanks = new ArrayList<>();
         boolean safe = true;
@@ -46,22 +44,18 @@ public class RankManager {
             Rank temp = new Rank(id);
             if (!vault.playerGroupExists(temp.group)) {
                 safe = false;
-                messenger.Warning("Following Rank is linked to unknown permission group. Plugin will not be loaded until you fix this issue.",
+                messenger.Warning("Following Rank is linked to unknown permission group.",
                         "Rank= §6" + Ordinal.to(id), "Group= §6" + temp.group);
             }
             tempRanks.add(temp);
         }
 
-        if (!safe) {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("AGMRanks");
-            if (plugin == null) return;
-            Bukkit.getPluginManager().disablePlugin(plugin);
-            return;
-        }
+        if (!safe) return false;
         ranks = new LinkedHashMap<>();
         tempRanks.forEach(this::saveRank);
 
         messenger.Debug("Ranks", "All Ranks has been loaded", "Ranks Count= §6" + ranks.size());
+        return true;
     }
 
     public void saveRank(Rank rank) {

@@ -50,6 +50,7 @@ public class CommandAGMRanks extends AdvancedCommand {
             AGMRanks.getRankManager().saveRank(rank);
 
             messenger.send(sender, "A new rank with default values created, Check config files for §b" + Ordinal.to(rank.id) + ".yml§r file");
+            messenger.send(sender, "NOTE: The new created rank will not be loaded until you reload the plugin. It's recommended to first configure new rank and then reload the plugin.");
         }
 
         List<String> expArgs = Arrays.asList("exp", "experience");

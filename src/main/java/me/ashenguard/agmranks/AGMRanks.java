@@ -9,6 +9,7 @@ import me.ashenguard.api.gui.GUI;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -16,8 +17,13 @@ import java.util.List;
 
 public final class AGMRanks extends SpigotPlugin {
     private static AGMRanks instance = null;
+    private static boolean ranksLoaded = true;
+
     public static AGMRanks getInstance() {
         return instance;
+    }
+    public static boolean areRanksLoaded() {
+        return ranksLoaded;
     }
 
     public static GUI getGUI() {
@@ -64,19 +70,25 @@ public final class AGMRanks extends SpigotPlugin {
         rankManager = new RankManager();
         userManager = new UserManager();
         GUI = new GUI(this);
-        rankManager.loadRanks();
+
+        ranksLoaded = rankManager.loadRanks();
+        if (!ranksLoaded) {
+            messenger.Warning("Plugin will be disabled until you fix the above issues!");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
 
         if (PHManager.enable) new Placeholders().register();
 
         new CommandAGMRanks();
         new CommandRanks();
 
-        for (User user: UserManager.getOnlineUsers()) user.login();
+        if (ranksLoaded) for (User user: UserManager.getOnlineUsers()) user.login();
     }
 
     @Override
     public void onPluginDisable() {
         if (GUI != null) GUI.closeAll();
-        for (User user: UserManager.getOnlineUsers()) user.logout();
+        if (ranksLoaded) for (User user: UserManager.getOnlineUsers()) user.logout();
     }
 }
