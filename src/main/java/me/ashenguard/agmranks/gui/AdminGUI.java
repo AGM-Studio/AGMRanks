@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AdminGUI extends GUIInventory {
-    private Rank center;
-    private int playerPage;
+    private Rank center = null;
+    private int playerPage = 0;
     private List<OfflinePlayer> players = new ArrayList<>();
 
     public AdminGUI(Player player) {
@@ -87,11 +87,11 @@ public class AdminGUI extends GUIInventory {
     }
 
     public void reload(Rank center) {
-        if (!this.center.equals(center)) {
+        if (this.center != center) {
             playerPage = 0;
-            setPlayersList(center != null ? center : this.center);
+            setPlayersList(center);
+            this.center = center;
         }
-        if (center != null) this.center = center;
         reload();
     }
 
