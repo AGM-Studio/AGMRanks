@@ -6,7 +6,7 @@
 
     <groupId>me.ashenguard</groupId>
     <artifactId>AGMRanks</artifactId>
-    <version>4.2</version>
+    <version>4.3</version>
     <packaging>jar</packaging>
 
     <name>AGMRanks</name>
@@ -25,7 +25,7 @@
                 <version>2.3.2</version>
                 <configuration>
                     <finalName>${project.name}-${project.version}</finalName>
-                    <outputDirectory>D:\\AGM\Spigot\Servers\SPIGOT1.17.1\plugins</outputDirectory>
+                    <outputDirectory>D:\\AGM\Spigot\Servers\SPIGOT1.18.1\plugins</outputDirectory>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>

@@ -3,10 +3,11 @@ package me.ashenguard.lib.events.agmranks;
 import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.agmranks.users.User;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class RankUpEvent implements Cancellable {
+public class RankUpEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final User user;
     private final Rank from;

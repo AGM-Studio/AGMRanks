@@ -93,9 +93,10 @@ public class User {
         }
         double cost = system.getCost(this, rank);
         RankUpEvent event = new RankUpEvent(this, current, rank, cost);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
 
-
-        system.payCost(this, cost);
+        system.payCost(this, event.getCost());
 
         this.changePermissionGroup(rank);
         this.rank = rank.id;

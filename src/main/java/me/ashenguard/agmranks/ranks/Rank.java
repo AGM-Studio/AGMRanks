@@ -15,6 +15,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,12 +40,21 @@ public class Rank {
     public Rank(int id) {
         this.id = id;
 
-        config = new Configuration(plugin, String.format("Ranks/%s.yml", Ordinal.to(id)), "Examples/rank.yml", (string -> string.replace("NNN", String.valueOf(id)).replace("ONN", Ordinal.to(id)).replace("ANN", Alphabetic.to(id))));
-        config.loadConfig();
+        Configuration config = null;
+        File template = new File(AGMRanks.getInstance().getDataFolder(), "rank_template.yml");
+        try {
+            InputStream stream = new FileInputStream(template);
+            config = new Configuration(plugin, String.format("Ranks/%s.yml", Ordinal.to(id)), stream, (string -> string.replace("NNN", String.valueOf(id)).replace("ONN", Ordinal.to(id)).replace("ANN", Alphabetic.to(id))));
+        } catch (FileNotFoundException ignored) { }
+        if (config == null){
+            config = new Configuration(plugin, String.format("Ranks/%s.yml", Ordinal.to(id)), "Examples/rank.yml", (string -> string.replace("NNN", String.valueOf(id)).replace("ONN", Ordinal.to(id)).replace("ANN", Alphabetic.to(id))));
+        }
+        this.config = config;
+        this.config.loadConfig();
 
-        this.group = config.getString("Group", "default");
-        this.name = config.getString("Name", "&cNOT_FOUND");
-        this.cost = config.getDouble("Cost", 0);
+        this.group = this.config.getString("Group", "default");
+        this.name = this.config.getString("Name", "&cNOT_FOUND");
+        this.cost = this.config.getDouble("Cost", 0);
     }
 
     // ---- Getters & Checks ---- //

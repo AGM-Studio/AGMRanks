@@ -5,6 +5,7 @@ import me.ashenguard.agmranks.commands.CommandRanks;
 import me.ashenguard.agmranks.ranks.RankManager;
 import me.ashenguard.agmranks.users.User;
 import me.ashenguard.agmranks.users.UserManager;
+import me.ashenguard.api.Configuration;
 import me.ashenguard.api.gui.GUI;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
@@ -65,6 +66,9 @@ public final class AGMRanks extends SpigotPlugin {
     @Override
     public void onPluginEnable() {
         instance = this;
+
+        Configuration config = new Configuration(this, "rank_template.yml", "Examples/rank.yml");
+        config.saveConfig();
 
         vault = new Vault();
         rankManager = new RankManager();

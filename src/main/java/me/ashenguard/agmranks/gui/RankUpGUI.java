@@ -57,6 +57,7 @@ public class RankUpGUI extends GUIInventory {
                 case RIGHT -> user.getBestAvailableRank();
                 default -> current;
             };
+            if (target == null) return;
             new RankGUI(player, target, this).show();
         } else if (slot == 18) {            // Left
             this.left();
