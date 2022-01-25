@@ -5,6 +5,7 @@ import me.ashenguard.agmranks.users.User;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class RankUpEvent extends Event implements Cancellable {
@@ -14,6 +15,7 @@ public class RankUpEvent extends Event implements Cancellable {
     private final Rank to;
     private double cost;
     private boolean cancelled = false;
+    private JavaPlugin canceller = null;
 
     public @NotNull HandlerList getHandlers() {
         return handlers;
@@ -50,12 +52,22 @@ public class RankUpEvent extends Event implements Cancellable {
         return cancelled;
     }
 
+    public JavaPlugin getCanceller() {
+        return canceller;
+    }
+
     @Override
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+    public void setCancelled(boolean cancel) {
+        setCancelled(cancel, null);
+    }
+
+    public void setCancelled(boolean cancel, JavaPlugin plugin) {
+        this.cancelled = cancel;
+        this.canceller = plugin;
     }
 
     public User getUser() {
         return user;
     }
+
 }

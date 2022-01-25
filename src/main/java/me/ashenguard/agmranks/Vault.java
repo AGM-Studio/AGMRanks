@@ -3,6 +3,7 @@ package me.ashenguard.agmranks;
 import me.ashenguard.api.messenger.Messenger;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -46,9 +47,9 @@ public class Vault {
         permissionsEnabled = setupPermissions();
 
         messenger.Debug("Vault", "Vault was hooked with this status: ",
-                "Economy: §6" + (economyEnabled? "§aEnable": "§cDisable"),
-                "Chat: §6" + (chatEnabled? "§aEnable": "§cDisable"),
-                "Permission: §6" + (permissionsEnabled? "§aEnable": "§cDisable"));
+                "Vault Economy: §6" + (economyEnabled? "§aEnable": "§cDisable"),
+                "Vault Chat: §6" + (chatEnabled? "§aEnable": "§cDisable"),
+                "Vault Permission: §6" + (permissionsEnabled? "§aEnable": "§cDisable"));
 
         messenger.Info("§6Vault§r successfully hooked");
     }
@@ -74,26 +75,33 @@ public class Vault {
 
     public void addPlayerGroup(OfflinePlayer player, String group) {
         permission.playerAddGroup(null, player, group);
-        messenger.Debug("Vault", "Player added to a group", "Player= §6" + player.getName(), "Group= §6" + group);
+        messenger.Debug("Vault", String.format("§6%s§r has been added to \"§6%s§r\" group", player.getName(), group));
     }
 
     public void removePlayerGroup(OfflinePlayer player, String group) {
         permission.playerRemoveGroup(null, player, group);
-        messenger.Debug("Vault", "Player removed from a group", "Player= §6" + player.getName(), "Group= §6" + group);
+        messenger.Debug("Vault",String.format("§6%s§r has been removed from \"§6%s§r\" group", player.getName(), group));
     }
 
     public double getPlayerBalance(OfflinePlayer player) {
         return economy.getBalance(player);
     }
 
-    public void withdrawPlayerMoney(OfflinePlayer player, double amount) {
-        economy.withdrawPlayer(player, amount);
-        messenger.Debug("Vault", "Player payed some money", "Player= §6" + player.getName(), "Money= §6" + amount, "New Balance= §6" + (int) getPlayerBalance(player));
+    public EconomyResponse withdrawPlayerMoney(OfflinePlayer player, double amount) {
+        EconomyResponse response = economy.withdrawPlayer(player, amount);
+        if (response.transactionSuccess())
+            messenger.Debug("Vault", String.format("§6%s§r's %.1f transaction (Withdraw) has been§a successful§r", player.getName(), amount));
+        else
+            messenger.Debug("Vault",String.format("§6%s§r's %.1f transaction (Withdraw) has been§c failed§r", player.getName(), amount));
+        return response;
     }
-
-    public void depositPlayerMoney(OfflinePlayer player, double amount) {
-        economy.depositPlayer(player, amount);
-        messenger.Debug("Vault", "Player got some money", "Player= §6" + player.getName(), "Money= §6" + amount, "New Balance= §6" + (int) getPlayerBalance(player));
+    public EconomyResponse depositPlayerMoney(OfflinePlayer player, double amount) {
+        EconomyResponse response = economy.depositPlayer(player, amount);
+        if (response.transactionSuccess())
+            messenger.Debug("Vault", String.format("§6%s§r's %.1f transaction (Deposit) has been§a successful§r", player.getName(), amount));
+        else
+            messenger.Debug("Vault",String.format("§6%s§r's %.1f transaction (Deposit) has been§c failed§r", player.getName(), amount));
+        return response;
     }
 
     public boolean playerGroupExists(String group) {

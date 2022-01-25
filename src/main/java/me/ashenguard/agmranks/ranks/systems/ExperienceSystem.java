@@ -1,7 +1,6 @@
 package me.ashenguard.agmranks.ranks.systems;
 
 import me.ashenguard.agmranks.users.User;
-import me.ashenguard.api.Configuration;
 import org.bukkit.Bukkit;
 
 import java.util.List;
@@ -37,10 +36,10 @@ public class ExperienceSystem extends RankingSystem {
     }
 
     @Override
-    public void payCost(User user, double amount) {
-        if (!useExperience) return;
-        Configuration config = user.getConfig();
-        config.set("Experience", config.getDouble("Experience", 0) - amount);
-        config.saveConfig();
+    public PaymentResponse payCost(User user, double amount) {
+        if (getScore(user) < amount) return new PaymentResponse(amount, false, "Insufficient Balance");
+        if (!useExperience) return PaymentResponse.ALREADY_PAID;
+        user.setExperience(user.getExperience() - amount);
+        return new PaymentResponse(amount, true, null);
     }
 }

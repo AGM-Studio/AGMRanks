@@ -9,8 +9,8 @@ Group: RankANN
 Name: '&6Rank &5NNN'
 Cost: 2000
 Commands:
-  - give %player_name% diamonds 10
-  - kit %player_name% ranking
+  - give %player_name% diamond NNN
+  - kit ranking %player_name%
 Items:
   Active:
     Material:

@@ -8,6 +8,7 @@ import me.ashenguard.agmranks.ranks.systems.PlaytimeSystem;
 import me.ashenguard.agmranks.ranks.systems.RankingSystem;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.utils.encoding.Ordinal;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -73,5 +74,11 @@ public class RankManager {
     }
     public LinkedHashMap<Integer, Rank> getRanks() {
         return new LinkedHashMap<>(ranks);
+    }
+    public List<Rank> getRankingOrder(@NotNull Rank from, @NotNull Rank to) {
+        List<Rank> ranks = new ArrayList<>();
+        if (from.isLowerThan(to)) for (int i = from.id + 1; i <= to.id; i++) ranks.add(getRank(i));
+        else if (from.isHigherThan(to)) for (int i = from.id - 1; i >= to.id; i--) ranks.add(getRank(i));
+        return ranks;
     }
 }

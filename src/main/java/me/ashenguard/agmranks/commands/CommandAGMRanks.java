@@ -54,7 +54,7 @@ public class CommandAGMRanks extends AdvancedCommand {
         }
 
         List<String> expArgs = Arrays.asList("exp", "experience");
-        if (args.length == 4 && expArgs.contains(args[0].toLowerCase())) {
+        if (args.length >= 4 && expArgs.contains(args[0].toLowerCase())) {
             Player player = Bukkit.getPlayer(args[2]);
             if (player == null) return;
 
@@ -70,21 +70,44 @@ public class CommandAGMRanks extends AdvancedCommand {
             else if (args[1].equalsIgnoreCase("set")) user.setExperience(amount);
             else if (args[1].equalsIgnoreCase("take")) user.setExperience(user.getExperience() - amount);
 
-            messenger.send(sender, "Player now has a new amount of experience", String.format("Player: %s", player.getName()), String.format("Experience: %f", user.getExperience()));
+            messenger.send(sender, "Player now has a new amount of experience", String.format("Player: §c%s", player.getName()), String.format("Experience: §6%f", user.getExperience()));
+        }
+
+        if (args.length > 2 && args[0].equalsIgnoreCase("resetPlayer")) {
+            Player player = Bukkit.getPlayer(args[1]);
+            if (player == null) return;
+
+            boolean resetHighestRank = args.length == 3 && args[2].equalsIgnoreCase("true");
+            User user = UserManager.getUser(player);
+            user.setRank(1);
+            if (resetHighestRank)
+                user.setHighestRank(1);
+
+            messenger.send(sender, String.format("§c%s§r's rank is now set to 1st rank", player.getName()));
+            if (resetHighestRank) messenger.send(sender, "Their highest rank is also now set to 1st as well");
         }
     }
 
     @Override
     public List<String> tabs(CommandSender commandSender, Command command, String alias, String[] args) {
-        List<String> tabs;
-        if (args.length == 0 || args.length == 1) tabs = Arrays.asList("reload", "newRank", "exp", "experience");
-        else if (args.length == 2) tabs = Arrays.asList("give", "set", "take");
-        else if (args.length == 3) tabs = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
-        else tabs = new ArrayList<>();
+        List<String> tabs = new ArrayList<>();
+        if (args.length == 0 || args.length == 1) tabs = Arrays.asList("reload", "newRank", "exp", "experience", "resetPlayer");
+        else if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("resetPlayer"))
+                tabs = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
+            else if (args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("experience"))
+                tabs = Arrays.asList("give", "set", "take");
+        } else if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("resetPlayer"))
+                tabs = Arrays.asList("true", "false");
+            else if (args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("experience"))
+                tabs = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
+        }
 
         List<String> available = new ArrayList<>();
         for (String tab: tabs) {
-            if (tab.toLowerCase().startsWith(args[0].toLowerCase())) {
+            String arg = args[args.length - 1];
+            if (tab.toLowerCase().startsWith(arg.toLowerCase())) {
                 available.add(tab);
             }
         }

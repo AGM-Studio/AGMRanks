@@ -33,5 +33,8 @@ public class PlaytimeSystem extends RankingSystem {
         return user.getPlaytime();
     }
 
-    @Override public void payCost(User user, double amount) {}
+    @Override public PaymentResponse payCost(User user, double amount) {
+        if (getScore(user) < amount) return new PaymentResponse(amount, false, "Insufficient Balance");
+        return PaymentResponse.ALREADY_PAID;
+    }
 }

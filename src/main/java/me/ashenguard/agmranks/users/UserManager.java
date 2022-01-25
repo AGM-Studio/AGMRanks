@@ -9,10 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UserManager implements Listener {
@@ -23,12 +20,29 @@ public class UserManager implements Listener {
     static class CacheCleaner implements Runnable {
         @Override
         public void run() {
-            for (Map.Entry<OfflinePlayer, User> temp: cache.entrySet())
-                if (temp.getValue().cache-- == 0) cache.remove(temp.getKey());
+            List<OfflinePlayer> outdated = new ArrayList<>();
+            for (Map.Entry<OfflinePlayer, User> temp: cache.entrySet()) {
+                temp.getValue().cache -= 1;
+                if (temp.getValue().cache <= 0) {
+                    temp.getValue().save();
+                    outdated.add(temp.getKey());
+                }
+            }
+            for (OfflinePlayer player: outdated) cache.remove(player);
         }
     }
+    public static void cleanCache() {
+        List<OfflinePlayer> outdated = new ArrayList<>();
+        for (Map.Entry<OfflinePlayer, User> temp: cache.entrySet()) {
+            if (temp.getValue().cache <= 0) {
+                temp.getValue().save();
+                outdated.add(temp.getKey());
+            }
+        }
+        for (OfflinePlayer player: outdated) cache.remove(player);
+    }
     static {
-        Bukkit.getScheduler().runTaskTimer(plugin, new CacheCleaner(), 0, 10);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new CacheCleaner(), 10, 10);
     }
 
     public static User getUser(OfflinePlayer player) {

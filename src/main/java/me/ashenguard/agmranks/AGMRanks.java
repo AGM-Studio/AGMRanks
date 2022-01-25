@@ -2,6 +2,7 @@ package me.ashenguard.agmranks;
 
 import me.ashenguard.agmranks.commands.CommandAGMRanks;
 import me.ashenguard.agmranks.commands.CommandRanks;
+import me.ashenguard.agmranks.commands.CustomCommandSender;
 import me.ashenguard.agmranks.ranks.RankManager;
 import me.ashenguard.agmranks.users.User;
 import me.ashenguard.agmranks.users.UserManager;
@@ -11,6 +12,7 @@ import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.messenger.PHManager;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -42,6 +44,8 @@ public final class AGMRanks extends SpigotPlugin {
     public static Messenger getMessenger() {
         return getInstance().messenger;
     }
+
+    public final CommandSender commandSender = new CustomCommandSender();
 
     public GUI GUI = null;
     public UserManager userManager = null;

@@ -6,7 +6,7 @@
 
     <groupId>me.ashenguard</groupId>
     <artifactId>AGMRanks</artifactId>
-    <version>4.3</version>
+    <version>5.0.0 Beta</version>
     <packaging>jar</packaging>
 
     <name>AGMRanks</name>

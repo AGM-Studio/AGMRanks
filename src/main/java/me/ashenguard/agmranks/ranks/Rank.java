@@ -120,10 +120,7 @@ public class Rank {
     }
 
     public void runCommands(User user) {
-        int highest = user.getHighestRank() == null ? 0 : user.getHighestRank().id;
-        if (id <= highest || !user.player.isOnline()) return;
-
-        user.setHighestRank(id);
+        if (!user.player.isOnline()) return;
         Player player = (Player) user.player;
         List<String> commands = PHManager.translate(player, config.getStringList("Commands"));
         for (String command:commands) {
@@ -137,7 +134,7 @@ public class Rank {
             if (args[0].equalsIgnoreCase("sudo"))
                 Bukkit.dispatchCommand(player, command.substring(5));
             else
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                Bukkit.dispatchCommand(plugin.commandSender, command);
         }
     }
 

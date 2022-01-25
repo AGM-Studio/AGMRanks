@@ -35,18 +35,19 @@ public class EconomySystem extends RankingSystem {
     @Override public boolean isRankAvailable(User user, Rank target) {
         Rank current = user.getRank();
         if (!vault.isEconomyEnabled() || !vault.isPermissionsEnabled()) return false;
-        if (current == null) return getCost(target) <= user.getScore();
         if (current.isLowerThan(target) && getCost(user, target) <= user.getScore()) return true;
         return current.isHigherThan(target) && sellRank;
     }
 
     @Override public double getCost(User user, Rank target) {
-        if (user.getRank() == null) return getCost(target);
         return user.getRank().isLowerThan(target) ? super.getCost(user, target) : super.getCost(user, target) * payback / 100;
     }
 
-    @Override public void payCost(User user, double amount) {
-        if (amount > 0) vault.withdrawPlayerMoney(user.player, amount);
-        else if (amount < 0) vault.depositPlayerMoney(user.player, -1 * amount);
+    @Override public PaymentResponse payCost(User user, double amount) {
+        if (getScore(user) < amount) return new PaymentResponse(amount, false, "Insufficient Balance");
+        if (amount > 0)
+            return PaymentResponse.fromEconomyResponse(vault.withdrawPlayerMoney(user.player, amount));
+        else
+            return PaymentResponse.fromEconomyResponse(vault.depositPlayerMoney(user.player, -amount));
     }
 }

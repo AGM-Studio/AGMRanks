@@ -6,7 +6,10 @@ import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.agmranks.users.User;
 import me.ashenguard.agmranks.users.UserManager;
 import me.ashenguard.api.messenger.Messenger;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.List;
 
 public abstract class RankingSystem {
     protected final AGMRanks plugin = AGMRanks.getInstance();
@@ -23,7 +26,7 @@ public abstract class RankingSystem {
     public boolean isRankAvailable(User user, Rank rank) {
         Rank current = user.getRank();
         if (!vault.isPermissionsEnabled()) return false;
-        return (current == null || current.isLowerThan(rank)) && user.getScore() >= getCost(user, rank);
+        return current.isLowerThan(rank) && user.getScore() >= getCost(user, rank);
     }
 
     public double getCost(Rank target) {
@@ -33,31 +36,44 @@ public abstract class RankingSystem {
         return getCost(user.getRank(), target);
     }
     public double getCost(Rank rank, Rank target) {
-        double cost = 0;
-
-        if (rank == null || rank.isLowerThan(target)) {
-            Rank temp = rank == null ? plugin.rankManager.getRank(1) : rank.getNext();
-            while (temp.isLowerThan(target)) {
-                cost += temp.cost;
-                temp = temp.getNext();
-            }
-        } else {
-            Rank temp = rank;
-            while (temp.isHigherThan(target)) {
-                cost -= temp.cost;
-                temp = temp.getPrevious();
-            }
-        }
-
-        return cost;
+        List<Rank> ranks = plugin.rankManager.getRankingOrder(rank, target);
+        return ranks.stream().mapToDouble(temp -> temp.cost).sum();
     }
     
-    public abstract void payCost(User user, double amount);
+    public abstract PaymentResponse payCost(User user, double amount);
 
     static class AutoRankingTask implements Runnable {
         @Override public void run() {
             for (User user: UserManager.getOnlineUsers()) user.setRank(user.getBestAvailableRank());
             AGMRanks.getMessenger().Debug("Ranks", "Auto-RankUP has been executed successfully");
+        }
+    }
+
+    public static class PaymentResponse {
+        public static final PaymentResponse ALREADY_PAID = new PaymentResponse(0, true, null);
+
+        private final double amount;
+        private final boolean success;
+        private final String error;
+
+        protected PaymentResponse(double amount, boolean success, String error) {
+            this.amount = amount;
+            this.success = success;
+            this.error = error;
+        }
+
+        public static PaymentResponse fromEconomyResponse(EconomyResponse response) {
+            return new PaymentResponse(response.amount, response.transactionSuccess(), response.errorMessage);
+        }
+
+        public double getAmount() {
+            return amount;
+        }
+        public boolean isSuccess() {
+            return success;
+        }
+        public String getError() {
+            return error;
         }
     }
 }

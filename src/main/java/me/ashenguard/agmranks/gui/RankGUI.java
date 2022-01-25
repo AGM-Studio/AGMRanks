@@ -57,8 +57,10 @@ public class RankGUI extends GUIInventory {
         Player player = (Player) event.getWhoClicked();
         int slot = event.getSlot();
 
-        if (slot == 38 && affordable)
+        if (slot == 38 && affordable) {
             UserManager.getUser(player).setRank(rank);
+            rankUpGUI.reload(rank);
+        }
         if (affordable && slot != 38 && slot != 42) return;
         if (!affordable && slot != 40) return;
 
