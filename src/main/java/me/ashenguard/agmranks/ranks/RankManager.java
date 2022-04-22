@@ -2,6 +2,8 @@ package me.ashenguard.agmranks.ranks;
 
 import me.ashenguard.agmranks.AGMRanks;
 import me.ashenguard.agmranks.Vault;
+import me.ashenguard.agmranks.exceptions.InvalidRankConfig;
+import me.ashenguard.agmranks.exceptions.InvalidRankingSystem;
 import me.ashenguard.agmranks.ranks.systems.EconomySystem;
 import me.ashenguard.agmranks.ranks.systems.ExperienceSystem;
 import me.ashenguard.agmranks.ranks.systems.PlaytimeSystem;
@@ -22,7 +24,7 @@ public class RankManager {
     public final File folder = new File(plugin.getDataFolder(), "Ranks");
     public final RankingSystem rankingSystem;
 
-    public RankManager() {
+    public RankManager() throws InvalidRankingSystem {
         if (!folder.exists() && folder.mkdirs()) messenger.Debug("General", "Ranks folder wasn't found, A new one created");
         File temporary = new File(folder, "1st.yml");
         if (!temporary.exists()) plugin.saveResource("Ranks/1st.yml", false);
@@ -31,12 +33,12 @@ public class RankManager {
         if (EconomySystem.isType(type)) rankingSystem = new EconomySystem();
         else if (ExperienceSystem.isType(type)) rankingSystem = new ExperienceSystem();
         else if (PlaytimeSystem.isType(type)) rankingSystem = new PlaytimeSystem();
-        else rankingSystem = new EconomySystem();
+        else throw new InvalidRankingSystem("System type '%s' is unknown for the plugin");
         rankingSystem.onEnable();
     }
 
     private LinkedHashMap<Integer, Rank> ranks = new LinkedHashMap<>();
-    public boolean loadRanks() {
+    public void loadRanks() throws InvalidRankConfig {
         Vault vault = AGMRanks.getVault();
         List<Rank> tempRanks = new ArrayList<>();
         boolean safe = true;
@@ -51,12 +53,11 @@ public class RankManager {
             tempRanks.add(temp);
         }
 
-        if (!safe) return false;
+        if (!safe) throw new InvalidRankConfig("One or more ranks have invalid configurations");
         ranks = new LinkedHashMap<>();
         tempRanks.forEach(this::saveRank);
 
         messenger.Debug("Ranks", "All Ranks has been loaded", "Ranks Count= §6" + ranks.size());
-        return true;
     }
 
     public void saveRank(Rank rank) {

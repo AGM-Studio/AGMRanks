@@ -3,6 +3,7 @@ package me.ashenguard.agmranks;
 import me.ashenguard.agmranks.commands.CommandAGMRanks;
 import me.ashenguard.agmranks.commands.CommandRanks;
 import me.ashenguard.agmranks.commands.CustomCommandSender;
+import me.ashenguard.agmranks.exceptions.PluginLoadingException;
 import me.ashenguard.agmranks.ranks.RankManager;
 import me.ashenguard.agmranks.users.User;
 import me.ashenguard.agmranks.users.UserManager;
@@ -71,18 +72,20 @@ public final class AGMRanks extends SpigotPlugin {
     public void onPluginEnable() {
         instance = this;
 
-        Configuration config = new Configuration(this, "rank_template.yml", "Examples/rank.yml");
-        config.saveConfig();
+        new Configuration(this, "rank_template.yml", "Examples/rank.yml").saveConfig();
 
-        vault = new Vault();
-        rankManager = new RankManager();
-        userManager = new UserManager();
-        GUI = new GUI(this);
+        try {
+            vault = new Vault();
+            rankManager = new RankManager();
+            userManager = new UserManager();
+            GUI = new GUI(this);
 
-        ranksLoaded = rankManager.loadRanks();
-        if (!ranksLoaded) {
-            messenger.Warning("Plugin will be disabled until you fix the above issues!");
+            rankManager.loadRanks();
+        } catch (PluginLoadingException exception) {
+            messenger.Warning(exception.getMessage());
+            messenger.Warning("Plugin will be disabled until you fix the issue!");
             Bukkit.getPluginManager().disablePlugin(this);
+            ranksLoaded = false;
             return;
         }
 
