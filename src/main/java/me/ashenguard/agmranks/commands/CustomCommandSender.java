@@ -4,6 +4,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -16,7 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings("ConstantConditions")
-public class CustomCommandSender implements CommandSender {
+public class CustomCommandSender implements RemoteConsoleCommandSender {
     @Override public void sendMessage(@NotNull String message) {}
     @Override public void sendMessage(@NotNull String... messages) {}
     @Override public void sendMessage(@Nullable UUID sender, @NotNull String message) {}
