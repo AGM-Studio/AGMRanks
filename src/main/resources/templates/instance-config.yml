@@ -1,0 +1,14 @@
+# The luckperms permission track which connects to this rank instance.
+# If you do not want to use permission rewards for ranks, Leave this empty.
+Track: '%TRACK%'
+
+# Required permission to allow players access this instance!
+Permission: ''
+
+# Number of times players can prestige. 0 means no prestige is allowed
+# Prestige will reset their rank to first rank.
+Prestiges: 0
+
+# Common commands for this instance, These commands will always be executed for each rank up
+Commands:
+  - 'broadcast %player_name% has ranked up to %agmranks_%INSTANCE%_rank_name%'
