@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public class RankUpEvent extends Event implements Cancellable {
+public class PlayerRankUpEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final User user;
     private final Rank from;
@@ -24,7 +24,7 @@ public class RankUpEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    public RankUpEvent(User user, Rank from, Rank to, double cost) {
+    public PlayerRankUpEvent(User user, Rank from, Rank to, double cost) {
         this.user = user;
         this.from = from;
         this.to = to;

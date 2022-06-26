@@ -3,7 +3,7 @@ Name: %NAME%
 
 # The money requirement for the rank
 # Any amount more than 0 will block auto ranking from performing.
-Money: %MONEY%
+Money: 1000
 # The amount of time (minutes) player need to have been playing on server. (Based on statistics)
 Playtime: 0
 # The amount of time (minutes) player need to remain alive.

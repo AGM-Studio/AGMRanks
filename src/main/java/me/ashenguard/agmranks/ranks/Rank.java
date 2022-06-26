@@ -1,150 +1,113 @@
 package me.ashenguard.agmranks.ranks;
 
 import me.ashenguard.agmranks.AGMRanks;
-import me.ashenguard.agmranks.ranks.systems.RankingSystem;
-import me.ashenguard.agmranks.users.User;
-import me.ashenguard.agmranks.users.UserManager;
+import me.ashenguard.agmranks.commands.CommandExecutor;
+import me.ashenguard.agmranks.ranks.requirements.LivetimeRequirement;
+import me.ashenguard.agmranks.ranks.requirements.MoneyRequirement;
+import me.ashenguard.agmranks.ranks.requirements.PlaytimeRequirement;
+import me.ashenguard.agmranks.ranks.requirements.ScoreRequirement;
 import me.ashenguard.api.Configuration;
-import me.ashenguard.api.gui.GUI;
-import me.ashenguard.api.messenger.PHManager;
+import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
+import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.utils.encoding.Alphabetic;
 import me.ashenguard.api.utils.encoding.Ordinal;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class Rank {
-    private final AGMRanks plugin = AGMRanks.getInstance();
-    private final RankManager rankManager = AGMRanks.getRankManager();
-    private final RankingSystem rankingSystem = rankManager.rankingSystem;
+    private final int id;
+    private final String name;
+    private final RankingInstance instance;
+    private final List<Requirement> requirements = new ArrayList<>();
 
-    public final int id;
-    public final String group;
-    public final String name;
+    private final PlaceholderItemStack activeItem;
+    private final PlaceholderItemStack availableItem;
+    private final PlaceholderItemStack unavailableItem;
 
-    public final double cost;
+    private final List<PlaceholderItemStack> rewards = new ArrayList<>();
+    private final List<CommandExecutor> commands = new ArrayList<>();
 
-    private final Configuration config;
+    private final List<Placeholder> placeholders = new ArrayList<>();
 
-    public Rank(int id) {
+    public Rank(RankingInstance instance, int id, String track) {
+        List<Placeholder> placeholders = Arrays.asList(
+                new Placeholder("TRACK", (p, s) -> track == null ? "''" : track),
+                new Placeholder("NAME", (p, s) -> String.format("Rank %s", Alphabetic.to(id)))
+        );
+        Configuration config = new Configuration(
+                AGMRanks.getInstance(),
+                String.format("ranks/%s/%s.yml", instance.getFolderName(), Ordinal.to(id)),
+                AGMRanks.getInstance().getResource("templates/rank-template.yml"),
+                string -> {
+                    for (Placeholder placeholder: placeholders) string = placeholder.apply(string, null);
+                    return string;
+                }
+        );
+
         this.id = id;
+        this.instance = instance;
+        this.name = config.getString("Name", "UNNAMED");
 
-        Configuration config = null;
-        File template = new File(AGMRanks.getInstance().getDataFolder(), "rank_template.yml");
-        try {
-            InputStream stream = new FileInputStream(template);
-            config = new Configuration(plugin, String.format("Ranks/%s.yml", Ordinal.to(id)), stream, (string -> string.replace("NNN", String.valueOf(id)).replace("ONN", Ordinal.to(id)).replace("ANN", Alphabetic.to(id))));
-        } catch (FileNotFoundException ignored) { }
-        if (config == null){
-            config = new Configuration(plugin, String.format("Ranks/%s.yml", Ordinal.to(id)), "Examples/rank.yml", (string -> string.replace("NNN", String.valueOf(id)).replace("ONN", Ordinal.to(id)).replace("ANN", Alphabetic.to(id))));
-        }
-        this.config = config;
-        this.config.loadConfig();
+        this.activeItem = PlaceholderItemStack.fromSection(config.getConfigurationSection("ActiveItem"));
+        this.availableItem = PlaceholderItemStack.fromSection(config.getConfigurationSection("AvailableItem"));
+        this.unavailableItem = PlaceholderItemStack.fromSection(config.getConfigurationSection("UnavailableItem"));
 
-        this.group = this.config.getString("Group", "default");
-        this.name = this.config.getString("Name", "&cNOT_FOUND");
-        this.cost = this.config.getDouble("Cost", 0);
-    }
+        List<?> rewards = config.getList("Rewards", Collections.EMPTY_LIST);
+        for (Object reward:rewards) AGMRanks.getMessenger().info(reward.getClass().getSimpleName());
 
-    // ---- Getters & Checks ---- //
-    public boolean hasNextRank() {
-        return getNext() != null;
-    }
-    public Rank getNext() {
-        return rankManager.getRank(id + 1);
-    }
+        config.getStringList("Commands").stream().map(CommandExecutor::new).forEach(commands::add);
 
-    public boolean hasPreviousRank() {
-        return getPrevious() != null;
-    }
-    public Rank getPrevious() {
-        return rankManager.getRank(id - 1);
+        double cost = config.getDouble(Arrays.asList("Cost", "Money"), 0);
+        if (cost > 0) requirements.add(new MoneyRequirement(cost));
+
+        long playtime = config.getLong("Playtime", 0);
+        if (playtime > 0) requirements.add(new PlaytimeRequirement(playtime));
+
+        long livetime = config.getLong("Livetime", 0);
+        if (livetime > 0) requirements.add(new LivetimeRequirement(this, livetime));
+
+        long score = config.getLong("Score", 0);
+        if (score > 0) requirements.add(new ScoreRequirement(this, score));
     }
 
-    public String getTranslatedName() {
-        return PHManager.translate(name);
-    }
-    public String getTranslatedName(OfflinePlayer player) {
-        return PHManager.translate(player, name);
-    }
-
-    public boolean isHigherThan(Rank rank) {
-        if (rank == null) return true;
-        return this.id > rank.id;
-    }
-    public boolean isLowerThan(Rank rank) {
-        if (rank == null) return false;
-        return this.id < rank.id;
+    public boolean areRequirementsMet(Player player) {
+        for (Requirement requirement:requirements)
+            if (!requirement.isMet(player)) return false;
+        return true;
     }
 
-    public RankType getType(OfflinePlayer player) {
-        return getType(UserManager.getUser(player));
+    public ItemStack getActiveItem(Player player) {
+        return activeItem.getItem(player, placeholders);
     }
-    public RankType getType(User user) {
-        Rank current = user.getRank();
-        if (current.isHigherThan(this) || current.equals(this)) return RankType.Active;
-        if (rankingSystem.isRankAvailable(user, this)) return RankType.Available;
-        return RankType.Unavailable;
+    public ItemStack getAvailableItem(Player player) {
+        return availableItem.getItem(player, placeholders);
     }
-
-    public ItemStack getItem(OfflinePlayer player) {
-        return getItem(player, getType(player));
+    public ItemStack getUnavailableItem(Player player) {
+        return unavailableItem.getItem(player, placeholders);
     }
-    public ItemStack getItem(OfflinePlayer player, RankType rankType) {
-        ConfigurationSection section = config.getConfigurationSection("Items." + rankType.name());
-        if (section == null) return GUI.NULL.clone();
-        return GUI.getItemStack(player, section);
-    }
-
-    public List<ItemStack> getRewards(OfflinePlayer player) {
-        List<ItemStack> rewards = new ArrayList<>();
-        ConfigurationSection section = config.getConfigurationSection("Rewards");
-        if (section == null) return rewards;
-        List<String> keys = section.getKeys(false).stream().sorted().collect(Collectors.toList());
-        for (String key: keys) {
-            ConfigurationSection item = section.getConfigurationSection(key);
-            if (item != null) rewards.add(GUI.getItemStack(player, item));
-        }
+    public List<PlaceholderItemStack> getRewards() {
         return rewards;
     }
 
-    public void runCommands(User user) {
-        if (!user.player.isOnline()) return;
-        Player player = (Player) user.player;
-        List<String> commands = PHManager.translate(player, config.getStringList("Commands"));
-        for (String command:commands) {
-            String[] args = command.split("\\s+");
-            if (args[0].startsWith("perm:")) {
-                if (!player.hasPermission(args[0].substring(6))) continue;
-                command = command.replace(args[0] + " ", "");
-            }
-
-            args = command.split("\\s+");
-            if (args[0].equalsIgnoreCase("sudo"))
-                Bukkit.dispatchCommand(player, command.substring(5));
-            else
-                Bukkit.dispatchCommand(plugin.commandSender, command);
-        }
+    public RankingInstance getRankingInstance() {
+        return instance;
     }
 
-    public String getOrdinal() {
-        return Ordinal.to(id);
+    public String getName() {
+        return name;
     }
 
-    public enum RankType {
-        Active,
-        Available,
-        Unavailable
+    public int getId() {
+        return id;
+    }
+
+    public void executeCommands(Player player) {
+        instance.executeCommands(player);
+        commands.forEach(command -> command.execute(player));
     }
 }
