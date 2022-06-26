@@ -11,6 +11,7 @@ import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.utils.encoding.Alphabetic;
 import me.ashenguard.api.utils.encoding.Ordinal;
+import net.luckperms.api.track.Track;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -34,14 +35,13 @@ public class Rank {
 
     private final List<Placeholder> placeholders = new ArrayList<>();
 
-    public Rank(RankingInstance instance, int id, String track) {
-        List<Placeholder> placeholders = Arrays.asList(
-                new Placeholder("TRACK", (p, s) -> track == null ? "''" : track),
+    public Rank(RankingInstance instance, int id, Track track) {
+        List<Placeholder> placeholders = Collections.singletonList(
                 new Placeholder("NAME", (p, s) -> String.format("Rank %s", Alphabetic.to(id)))
         );
         Configuration config = new Configuration(
                 AGMRanks.getInstance(),
-                String.format("ranks/%s/%s.yml", instance.getFolderName(), Ordinal.to(id)),
+                String.format("ranks/%s/%s.yml", instance.getFilename(), Ordinal.to(id)),
                 AGMRanks.getInstance().getResource("templates/rank-template.yml"),
                 string -> {
                     for (Placeholder placeholder: placeholders) string = placeholder.apply(string, null);

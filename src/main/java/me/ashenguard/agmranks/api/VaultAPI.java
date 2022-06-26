@@ -1,5 +1,6 @@
-package me.ashenguard.agmranks;
+package me.ashenguard.agmranks.api;
 
+import me.ashenguard.agmranks.AGMRanks;
 import me.ashenguard.api.messenger.Messenger;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -12,8 +13,8 @@ import java.util.Arrays;
 
 import static org.bukkit.Bukkit.getServer;
 
-@SuppressWarnings({"BooleanMethodIsAlwaysInverted", "unused", "FieldCanBeLocal"})
-public class Vault {
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
+public class VaultAPI {
     private final AGMRanks plugin = AGMRanks.getInstance();
     private final Messenger messenger = AGMRanks.getMessenger();
 
@@ -36,7 +37,7 @@ public class Vault {
     private Chat chat = null;
 
 
-    public Vault() {
+    public VaultAPI() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             messenger.Warning("§6Vault§r wasn't found");
             return;

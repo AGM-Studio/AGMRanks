@@ -1,3 +1,6 @@
+# Instance name that will be shown in with placeholders
+Name: '%NAME%'
+
 # The luckperms permission track which connects to this rank instance.
 # If you do not want to use permission rewards for ranks, Leave this empty.
 Track: '%TRACK%'
@@ -7,7 +10,10 @@ Permission: ''
 
 # Number of times players can prestige. 0 means no prestige is allowed
 # Prestige will reset their rank to first rank.
-Prestiges: 0
+PrestigeLimit: 0
+
+# The multiplier for "ALL" requirements of the ranks and it will stack every prestige
+PrestigeMultiplier: 10
 
 # Common commands for this instance, These commands will always be executed for each rank up
 Commands:
