@@ -1,85 +1,53 @@
 package me.ashenguard.agmranks.ranks;
 
+import com.google.common.collect.ImmutableMap;
 import me.ashenguard.agmranks.AGMRanks;
-import me.ashenguard.agmranks.Vault;
-import me.ashenguard.agmranks.exceptions.InvalidRankConfig;
-import me.ashenguard.agmranks.exceptions.InvalidRankingSystem;
-import me.ashenguard.agmranks.ranks.systems.EconomySystem;
-import me.ashenguard.agmranks.ranks.systems.ExperienceSystem;
-import me.ashenguard.agmranks.ranks.systems.PlaytimeSystem;
-import me.ashenguard.agmranks.ranks.systems.RankingSystem;
 import me.ashenguard.api.messenger.Messenger;
-import me.ashenguard.api.utils.encoding.Ordinal;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class RankManager {
-    private final AGMRanks plugin = AGMRanks.getInstance();
-    private final Messenger messenger = AGMRanks.getMessenger();
+    private static final Predicate<String> NAME_PATTERN = Pattern.compile("^[a-z][a-z0-9]*$").asPredicate();
 
-    public final File folder = new File(plugin.getDataFolder(), "Ranks");
-    public final RankingSystem rankingSystem;
-
-    public RankManager() throws InvalidRankingSystem {
-        if (!folder.exists() && folder.mkdirs()) messenger.Debug("General", "Ranks folder wasn't found, A new one created");
-        File temporary = new File(folder, "1st.yml");
-        if (!temporary.exists()) plugin.saveResource("Ranks/1st.yml", false);
-
-        String type = plugin.getConfig().getString("RankingSystem.Type", "Money");
-        if (EconomySystem.isType(type)) rankingSystem = new EconomySystem();
-        else if (ExperienceSystem.isType(type)) rankingSystem = new ExperienceSystem();
-        else if (PlaytimeSystem.isType(type)) rankingSystem = new PlaytimeSystem();
-        else throw new InvalidRankingSystem("System type '%s' is unknown for the plugin");
-        rankingSystem.onEnable();
+    private static RankManager instance = null;
+    public static RankManager getInstance() {
+        return instance;
     }
 
-    private LinkedHashMap<Integer, Rank> ranks = new LinkedHashMap<>();
-    public void loadRanks() throws InvalidRankConfig {
-        Vault vault = AGMRanks.getVault();
-        List<Rank> tempRanks = new ArrayList<>();
-        boolean safe = true;
+    public final File folder = new File(AGMRanks.getInstance().getDataFolder(), "ranks");
+    private final Map<String, RankingInstance> instances = new HashMap<>();
 
-        for (int id = 1; isRankDefined(id); id++) {
-            Rank temp = new Rank(id);
-            if (!vault.playerGroupExists(temp.group)) {
-                safe = false;
-                messenger.Warning("Following Rank is linked to unknown permission group.",
-                        "Rank= §6" + Ordinal.to(id), "Group= §6" + temp.group);
+    public RankManager() {
+        RankManager.instance = this;
+    }
+
+    public void loadRanks() {
+        final Messenger messenger = AGMRanks.getMessenger();
+        Arrays.stream(folder.listFiles((file) -> !file.isFile() && NAME_PATTERN.test(file.getParent()))).map(File::getName).forEach(file -> {
+            try {
+                messenger.debug("Ranks", String.format("Loading '§6%s§r'...", file));
+                instances.put(file, new RankingInstance(file));
+                messenger.debug("Ranks", String.format("'§6%s§r' loaded with %d ranks in it.", file, instances.get(file).getRanks().size()));
+            } catch (AssertionError error) {
+                messenger.warning(
+                        String.format("While loading '%s' got following error:", file),
+                        error.getMessage()
+                );
+            } catch (Throwable throwable) {
+                messenger.handleException(String.format("Loading instance '%s' caused an exception", file), throwable);
             }
-            tempRanks.add(temp);
-        }
-
-        if (!safe) throw new InvalidRankConfig("One or more ranks have invalid configurations");
-        ranks = new LinkedHashMap<>();
-        tempRanks.forEach(this::saveRank);
-
-        messenger.Debug("Ranks", "All Ranks has been loaded", "Ranks Count= §6" + ranks.size());
+        });
     }
 
-    public void saveRank(Rank rank) {
-        if (ranks.containsKey(rank.id)) return;
-        ranks.put(rank.id, rank);
-        messenger.Debug("Ranks", "Rank has been loaded", "Rank= §6" + Ordinal.to(rank.id), "Group= §6" + rank.group, "Name= §6" + rank.getTranslatedName(), "Cost= §6" + rank.cost);
+    public Map<String, RankingInstance> getRankingInstances() {
+        return ImmutableMap.copyOf(instances);
     }
-
-    public boolean isRankDefined(int id) {
-        return new File(folder, Ordinal.to(id) + ".yml").exists();
-    }
-
-    public Rank getRank(int i) {
-        return ranks.getOrDefault(i, null);
-    }
-    public LinkedHashMap<Integer, Rank> getRanks() {
-        return new LinkedHashMap<>(ranks);
-    }
-    public List<Rank> getRankingOrder(@NotNull Rank from, @NotNull Rank to) {
-        List<Rank> ranks = new ArrayList<>();
-        if (from.isLowerThan(to)) for (int i = from.id + 1; i <= to.id; i++) ranks.add(getRank(i));
-        else if (from.isHigherThan(to)) for (int i = from.id - 1; i >= to.id; i--) ranks.add(getRank(i));
-        return ranks;
+    public RankingInstance getRankingInstance(String name) {
+        return instances.getOrDefault(name, null);
     }
 }

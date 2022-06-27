@@ -1,22 +1,20 @@
 package me.ashenguard.agmranks.ranks;
 
 import me.ashenguard.agmranks.AGMRanks;
+import me.ashenguard.agmranks.Utils;
 import me.ashenguard.agmranks.api.LuckPermsAPI;
 import me.ashenguard.agmranks.commands.CommandExecutor;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.utils.encoding.Ordinal;
 import net.luckperms.api.track.Track;
-import org.apache.commons.lang.IllegalClassException;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
@@ -36,6 +34,8 @@ public class RankingInstance {
     private final int prestiges;
     private final int multiplier;
 
+    public final String SCORE_PDC_KEY, RANK_PDC_KEY, HIGHRANK_PDC_KEY;
+
     private static Configuration loadConfig(String filename, String name, String track) {
         List<Placeholder> placeholders = Arrays.asList(
                 new Placeholder("TRACK", (p, s) -> track == null ? "''" : track),
@@ -46,21 +46,24 @@ public class RankingInstance {
                 String.format("ranks/%s/config.yml", filename),
                 AGMRanks.getInstance().getResource("templates/instance-template.yml"),
                 string -> {
-                    for (Placeholder placeholder: placeholders) string = placeholder.apply(string, null);
+                    for (Placeholder placeholder : placeholders) string = placeholder.apply(string, null);
                     return string;
                 }
         );
     }
 
+    public RankingInstance(String filename) {
+        this(filename, filename, null);
+    }
 
     public RankingInstance(String filename, String name, String track) {
         Configuration config = loadConfig(filename, name, track);
         File folder = getFolder();
         if (!folder.exists()) folder.mkdirs();
 
-        this.name = name;
         this.filename = filename;
-        this.track = LuckPermsAPI.getTrack(track);
+        this.name = config.getString("Name", filename);
+        this.track = LuckPermsAPI.getTrack(config.getString("Track", ""));
 
         this.prestiges = config.getInt("PrestigeLimit", 0);
         this.multiplier = config.getInt("PrestigeMultiplier", 1);
@@ -69,6 +72,10 @@ public class RankingInstance {
 
         int id = 1;
         while (new File(folder, Ordinal.to(id) + ".yml").exists()) ranks.add(new Rank(this, id++, this.track));
+
+        SCORE_PDC_KEY = String.format("%s_score", filename);
+        RANK_PDC_KEY = String.format("%s_rank", filename);
+        HIGHRANK_PDC_KEY = String.format("%s_highrank", filename);
     }
 
     public void executeCommands(Player player) {
@@ -95,77 +102,68 @@ public class RankingInstance {
         return new File(AGMRanks.getInstance().getDataFolder(), String.format("ranks/%s", filename));
     }
 
-    public void updateWith(Class<? extends Event> event) {
-        Bukkit.getPluginManager().registerEvents(new EventListener<>(event, this), AGMRanks.getInstance());
+    public <T extends Event> void updateWith(final Class<T> cls) {
+        RankingInstance instance = this;
+        class EventListener implements Listener {
+            private final boolean playerEvent;
+
+            public EventListener() {
+                this.playerEvent = PlayerEvent.class.isAssignableFrom(cls);
+
+                assert playerEvent || EntityEvent.class.isAssignableFrom(cls) : String.format("%s is not assignable from PlayerEvent or EntityEvent", cls.getSimpleName());
+            }
+
+            @EventHandler
+            public void onEvent(T event) {
+                if (playerEvent && event instanceof PlayerEvent)
+                    instance.update(((PlayerEvent) event).getPlayer());
+                else if (event instanceof EntityEvent && ((EntityEvent) event).getEntity() instanceof Player)
+                    instance.update((Player) ((EntityEvent) event).getEntity());
+            }
+        }
+        Bukkit.getPluginManager().registerEvents(new EventListener(), AGMRanks.getInstance()
+        );
     }
 
     public void update(Player player) {
 
     }
 
-    public Rank getHighRank(Player player) {
-        PersistentDataContainer container = player.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(AGMRanks.getInstance(), String.format("%s_high_rank", filename));
-
-        Integer id = container.get(key, PersistentDataType.INTEGER);
-        if (id == null) return null;
-        return ranks.get(id - 1);
+    public long getScore(Player player) {
+        return Utils.getPlayerData(player, SCORE_PDC_KEY, PersistentDataType.LONG, (long) 0);
     }
 
-    public long getScore(Player player) {
-        PersistentDataContainer container = player.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(AGMRanks.getInstance(), String.format("%s_score", filename));
-
-        Long score = container.get(key, PersistentDataType.LONG);
-        return score == null ? 0 : score;
+    public void setScore(Player player, long score) {
+        Utils.setPlayerData(player, SCORE_PDC_KEY, PersistentDataType.LONG, score);
     }
 
     public Rank getRank(Player player) {
-        PersistentDataContainer container = player.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(AGMRanks.getInstance(), String.format("%s_rank", filename));
-
-        Integer id = container.get(key, PersistentDataType.INTEGER);
-        if (id == null) return null;
-        return ranks.get(id - 1);
-    }
-
-    public void setHighRank(Player player, Rank rank, boolean overwrite) {
-        if (rank.getRankingInstance() != this) return;
-
-        PersistentDataContainer container = player.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(AGMRanks.getInstance(), String.format("%s_high_rank", filename));
-        if (overwrite) container.set(key, PersistentDataType.INTEGER, rank.getId());
-        else {
-            Integer current = container.get(key, PersistentDataType.INTEGER);
-            if (current != null && current < rank.getId()) container.set(key, PersistentDataType.INTEGER, rank.getId());
-        }
+        int id = Utils.getPlayerData(player, RANK_PDC_KEY, PersistentDataType.INTEGER, -1);
+        if (0 > id || id >= ranks.size()) return null;
+        return ranks.get(id);
     }
 
     public void setRank(Player player, Rank rank) {
         if (rank.getRankingInstance() != this) return;
-
-        PersistentDataContainer container = player.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(AGMRanks.getInstance(), String.format("%s_rank", filename));
-
-        container.set(key, PersistentDataType.INTEGER, rank.getId());
+        Utils.setPlayerData(player, RANK_PDC_KEY, PersistentDataType.INTEGER, rank.getId());
     }
 
-    static class EventListener<T extends Event> implements Listener {
-        private final boolean playerEvent;
-        private final RankingInstance instance;
+    public Rank getHighRank(Player player) {
+        int id = Utils.getPlayerData(player, HIGHRANK_PDC_KEY, PersistentDataType.INTEGER, -1);
+        if (0 > id || id >= ranks.size()) return null;
+        return ranks.get(id);
+    }
 
-        public EventListener(Class<T> cls, RankingInstance instance) {
-            this.playerEvent = PlayerEvent.class.isAssignableFrom(cls);
-            if (!playerEvent && EntityEvent.class.isAssignableFrom(cls)) throw new IllegalClassException(String.format("%s is not assignable from PlayerEvent or EntityEvent", cls.getSimpleName()));
-            this.instance = instance;
-        }
+    public void setHighRank(Player player, Rank rank, boolean overwrite) {
+        if (rank.getRankingInstance() != this) return;
+        Utils.setPlayerData(player, RANK_PDC_KEY, PersistentDataType.INTEGER, rank.getId(), overwrite ? null : integer -> integer != null && integer < rank.getId());
+    }
 
-        @EventHandler
-        public void onEvent(T event) {
-            if (playerEvent && event instanceof PlayerEvent)
-                instance.update(((PlayerEvent) event).getPlayer());
-            else if (event instanceof EntityEvent && ((EntityEvent) event).getEntity() instanceof Player)
-                instance.update((Player) ((EntityEvent) event).getEntity());
-        }
+    public int getPrestige(Player player) {
+        return Utils.getPlayerData(player, SCORE_PDC_KEY, PersistentDataType.INTEGER, 0);
+    }
+
+    public void setPrestige(Player player, int prestige) {
+        Utils.setPlayerData(player, SCORE_PDC_KEY, PersistentDataType.INTEGER, prestige);
     }
 }

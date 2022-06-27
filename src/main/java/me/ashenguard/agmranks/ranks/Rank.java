@@ -11,6 +11,7 @@ import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.placeholder.Placeholder;
 import me.ashenguard.api.utils.encoding.Alphabetic;
 import me.ashenguard.api.utils.encoding.Ordinal;
+import me.ashenguard.exceptions.RankLoadingException;
 import net.luckperms.api.track.Track;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -48,6 +49,8 @@ public class Rank {
                     return string;
                 }
         );
+
+        if (track != null && track.getGroups().size() < id) throw new RankLoadingException("Track do not accept anymore groups");
 
         this.id = id;
         this.instance = instance;
