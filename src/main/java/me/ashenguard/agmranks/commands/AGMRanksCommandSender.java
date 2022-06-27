@@ -17,7 +17,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings("ConstantConditions")
-public class CustomCommandSender implements RemoteConsoleCommandSender {
+public class AGMRanksCommandSender implements RemoteConsoleCommandSender {
+    private static AGMRanksCommandSender instance = null;
+    public static AGMRanksCommandSender getInstance() {
+        if (instance == null) instance = new AGMRanksCommandSender();
+        return instance;
+    }
+
     @Override public void sendMessage(@NotNull String message) {}
     @Override public void sendMessage(@NotNull String... messages) {}
     @Override public void sendMessage(@Nullable UUID sender, @NotNull String message) {}

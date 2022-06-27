@@ -1,7 +1,5 @@
 package me.ashenguard.agmranks.commands;
 
-import me.ashenguard.agmranks.AGMRanks;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -13,6 +11,7 @@ import java.util.regex.Pattern;
 public class CommandExecutor {
     private static final Pattern PERM_PATTERN = Pattern.compile("[Pp]erm:\s?(.+)\s");
     private static final Pattern SUDO_PATTERN = Pattern.compile("^\s*[Ss]udo");
+    private static final Pattern TRIM_PATTERN = Pattern.compile("^\s*(.*)\s*$");
 
     private final List<String> permissions = new ArrayList<>();
     private final boolean sudo;
@@ -31,13 +30,15 @@ public class CommandExecutor {
             this.sudo = true;
         } else this.sudo = false;
 
-        this.command = StringUtils.trim(command);
+        Matcher trimMatcher = TRIM_PATTERN.matcher(command);
+        if (trimMatcher.find()) this.command = trimMatcher.group(1);
+        else this.command = command;
     }
 
     public void execute(Player player) {
         for (String permission:permissions) if (!player.hasPermission(permission)) return;
 
         if (sudo) Bukkit.dispatchCommand(player, command);
-        else Bukkit.dispatchCommand(AGMRanks.getCommandSender(), command);
+        else Bukkit.dispatchCommand(AGMRanksCommandSender.getInstance(), command);
     }
 }
