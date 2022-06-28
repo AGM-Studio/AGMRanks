@@ -1,6 +1,7 @@
 # The name of the rank
 Name: %NAME%
 
+### All the Requirements for 1st rank are ignored completely
 # The money requirement for the rank
 # Any amount more than 0 will block auto ranking from performing.
 Money: 1000

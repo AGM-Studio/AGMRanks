@@ -14,7 +14,7 @@ public class ScoreRequirement extends Requirement {
     public ScoreRequirement(Rank rank, long amount) {
         this.amount = amount;
         
-        rank.getRankingInstance().updateWith(PlayerScoreUpdateEvent.class);
+        rank.getBatch().updateWith(PlayerScoreUpdateEvent.class);
     }
 
     @Override

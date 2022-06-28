@@ -12,7 +12,7 @@ public class LivetimeRequirement extends Requirement {
     public LivetimeRequirement(Rank rank, long amount) {
         this.amount = amount;
 
-        rank.getRankingInstance().updateWith(PlayerDeathEvent.class);
+        rank.getBatch().updateWith(PlayerDeathEvent.class);
     }
 
     @Override

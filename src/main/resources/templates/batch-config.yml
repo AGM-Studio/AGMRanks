@@ -1,11 +1,11 @@
 # Instance name that will be shown in with placeholders
 Name: '%NAME%'
 
-# The luckperms permission track which connects to this rank instance.
+# The luckperms permission track which connects to this rank batch.
 # If you do not want to use permission rewards for ranks, Leave this empty.
 Track: '%TRACK%'
 
-# Required permission to allow players access this instance!
+# Required permission to allow players access this batch!
 Permission: ''
 
 # Number of times players can prestige. 0 means no prestige is allowed
@@ -15,6 +15,6 @@ PrestigeLimit: 0
 # The multiplier for "ALL" requirements of the ranks and it will stack every prestige
 PrestigeMultiplier: 10
 
-# Common commands for this instance, These commands will always be executed for each rank up
+# Common commands for this batch, These commands will always be executed for each rank up
 Commands:
   - 'broadcast %player_name% has ranked up to %agmranks_%INSTANCE%_rank_name%'
