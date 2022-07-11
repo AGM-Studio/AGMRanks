@@ -1,2 +1,4 @@
+PlayerOnly: '§cThis command can only be executed by a player.'
+
 # "%1$s": Rank name, "%2$s": Batch name
-RankReset: 'Your %2$s ranking has been reset to %1$s due losing one or multiple requirements.'
+RankReset: 'Your %2$s§r ranking has been reset to %1$s§r due losing one or multiple requirements.'

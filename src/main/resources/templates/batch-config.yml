@@ -1,9 +1,17 @@
 # Instance name that will be shown in with placeholders
 Name: '%NAME%'
 
+# This number will be used to sort the GUI slots
+Sorting: %SORTING%
+
 # The luckperms permission track which connects to this rank batch.
 # If you do not want to use permission rewards for ranks, Leave this empty.
 Track: '%TRACK%'
+
+# The item to be showed in batch menu
+Icon:
+  Material: DIAMOND_SOWRD
+  Name: '§6%NAME%'
 
 # Required permission to allow players access this batch!
 Permission: ''

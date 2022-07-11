@@ -1,0 +1,22 @@
+# Placeholders - This is a list of local placeholders that you can use!
+# %batches%
+# Number of active batches
+
+Title: '§6Ranking Groups'
+Size: 3
+
+# Slots that will be filled with batch icon/item (Batches are sorted with the sorting key within their config)
+# Make sure there are enough slots for all batches
+# Since not all batches might show up for a player, they will be aligned to center of this list
+EmptySlots: [10, 11, 12, 13, 14, 15, 16]
+
+Slots:
+  Border:
+    Slots: [
+        0-0 ,   1-1 ,  2-2 ,  3-3 ,  4-4 ,  5-5 ,  6-6 ,  7-7 ,  8-8 ,
+        9-1 ,  10-2 , 11-3 , 12-4 , 13-5 , 14-6 , 15-7 , 16-8 , 17-9 ,
+        18-2 , 19-3 , 20-4 , 21-5 , 22-6 , 23-7 , 24-8 , 25-9 , 26-10
+    ]
+    Items:
+      - '12xAGMRanks:RedBorder'
+      - '3xAGMRanks:BlueBorder'
