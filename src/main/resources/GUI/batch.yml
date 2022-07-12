@@ -1,0 +1,49 @@
+# Placeholders - This is a list of local placeholders that you can use!
+# %batch_name% -> The name of batch
+# %count_ranks% -> The number of ranks in this batch
+# %current_rank% -> The name of player's rank in this batch
+
+
+Title: '§6%batch_name%'
+Size: 4
+
+# Slots that will be filled with ranks icon/item
+EmptySlots: [9, 10, 11, 12, 13, 14, 15, 16, 17]
+
+Slots:
+  Border:
+    Slots: [
+        0-0 ,   1-1 ,  2-2 ,  3-3 ,  4-4 ,  5-5 ,  6-6 ,  7-7 ,  8-8 ,
+        9-1 ,  10-2 , 11-3 , 12-4 , 13-5 , 14-6 , 15-7 , 16-8 , 17-9 ,
+        18-2 , 19-3 , 20-4 , 21-5 , 22-6 , 23-7 , 24-8 , 25-9 , 26-10,
+               28-4 , 29-5 , 30-6 ,        32-8 , 33-9 , 34-10
+    ]
+    Items:
+      - '12xAGMRanks:RedBorder'
+      - '3xAGMRanks:BlueBorder'
+    Menu:
+      Slots: [ 31 ]
+      Items: [ Menu ]
+    Next:
+      Slots: [ 35 ]
+      Items: [ Next ]
+    Previous:
+      Slots: [ 27 ]
+      Items: [ Previous ]
+
+Items:
+  Next:
+    Material:
+      ID: Custom_Head
+      Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjVhODRlNjM5NGJhZjhiZDc5NWZlNzQ3ZWZjNTgyY2RlOTQxNGZjY2YyZjFjODYwOGYxYmUxOGMwZTA3OTEzOCJ9fX0=
+    Name: '&e&lMove to right'
+  Previous:
+    Material:
+      ID: Custom_Head
+      Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGE1M2QwNDc5N2I0N2E2ODQ4NGQxMTEwMjVkOTQwYTM0ODg2YTBmYThkYzgwNmU3NDU3MDI0YTg3ZjFhYmQ1NiJ9fX0=
+    Name: '&e&lMove to left'
+  Menu:
+    Material:
+      ID: Custom_Head
+      Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY1Y2IxODVjNjQxY2JlNzRlNzBiY2U2ZTZhMWVkOTBhMTgwZWMxYTQyMDM0ZDVjNGFlZDU3YWY1NjBmYzgzYSJ9fX0=
+    Name: '&5&lReturn'

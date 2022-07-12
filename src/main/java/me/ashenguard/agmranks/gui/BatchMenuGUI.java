@@ -18,6 +18,10 @@ import java.util.function.Function;
 public class BatchMenuGUI extends GUIInventory {
     private static final Configuration config = new Configuration(AGMRanks.getInstance(), "GUI/batch-menu.yml", true);
 
+    protected static void showBatchMenu(Player player) {
+        new BatchMenuGUI(player).show();
+    }
+
     public BatchMenuGUI(Player player) {
         super(player, config);
 
