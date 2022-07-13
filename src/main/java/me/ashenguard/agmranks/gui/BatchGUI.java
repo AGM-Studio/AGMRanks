@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BatchGUI extends GUIInventory {
@@ -48,7 +49,12 @@ public class BatchGUI extends GUIInventory {
             defaults.putIfAbsent(slot, getSlot(slot));
             Rank rank = this.batch.getRank(i + start);
             if (rank == null) setSlot(slot, defaults.get(slot));
-            else setSlot(slot, new GUIInventorySlot(slot).addItem(rank.getPlayerItem(this.player)));
+            else {
+                GUIInventorySlot inventorySlot = new GUIInventorySlot(slot);
+                inventorySlot.addItem(rank.getPlayerItem(this.player));
+                inventorySlot.setAction((Consumer<InventoryClickEvent>) event -> BatchRankGUI.showBatchRank(player, rank));
+                setSlot(slot, inventorySlot);
+            }
         }
     }
 
@@ -71,6 +77,5 @@ public class BatchGUI extends GUIInventory {
             };
             default -> null;
         };
-
     }
 }

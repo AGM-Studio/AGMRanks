@@ -1,0 +1,45 @@
+# Placeholders - This is a list of local placeholders that you can use!
+# %rank_name% -> The name of rank
+
+
+Title: '%rank_name%'
+Size: 6
+
+# Slots that will be filled with the reward icons
+EmptySlots: [28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43]
+# Where rank icon should show up
+RankIconSlots: [4]
+
+Slots:
+  Border:
+    Slots: [
+        0-0 ,   1-1 ,  2-2 ,  3-3 ,  4-4 ,  5-5 ,  6-6 ,  7-7 ,  8-8 ,
+        9-1 ,  10-2 , 11-3 , 12-4 , 13-5 , 14-6 , 15-7 , 16-8 , 17-9 ,
+        18-2 , 19-3 , 20-4 , 21-5 , 22-6 , 23-7 , 24-8 , 25-9 , 26-10,
+        27-3 , 28-4 , 29-5 , 30-6 , 31-7 , 32-8 , 33-9 , 34-10, 35-11,
+        36-4 , 37-5 , 38-6 , 39-7 , 40-8 , 41-9 , 42-10, 43-11, 44-12,
+        45-5 , 46-6 , 47-7 , 48-8 , 49-9 , 50-10, 51-11, 52-12, 53-13
+    ]
+    Items:
+      - '12xAGMRanks:RedBorder'
+      - '3xAGMRanks:BlueBorder'
+    Menu:
+      Slots: [ 49 ]
+      Items: [ Menu ]
+    Accept:
+      Slots: [ 10 ]
+      Items: [ Next ]
+    Deny:
+      Slots: [ 16 ]
+      Items: [ Previous ]
+
+Items:
+  Menu:
+    CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY1Y2IxODVjNjQxY2JlNzRlNzBiY2U2ZTZhMWVkOTBhMTgwZWMxYTQyMDM0ZDVjNGFlZDU3YWY1NjBmYzgzYSJ9fX0=
+    Name: '&5&lReturn'
+  Accept:
+    Material: GREEN_CONCRETE
+    Name: '&a&lRank UP'
+  Deny:
+    Material: RED_CONCRETE
+    Name: '&c&lCancel'
