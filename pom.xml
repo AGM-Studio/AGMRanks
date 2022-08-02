@@ -25,7 +25,7 @@
                 <version>2.3.2</version>
                 <configuration>
                     <finalName>${project.name}-${project.version}</finalName>
-                    <outputDirectory>D:\\AGM\Spigot\Servers\SPIGOT1.18.1\plugins</outputDirectory>
+                    <outputDirectory>D:\\AGM\Spigot\Servers\SPIGOT1.19\plugins</outputDirectory>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>xyz.agmdev</groupId>
             <artifactId>AGMCore</artifactId>
-            <version>4.1.0</version>
+            <version>4.3.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
