@@ -21,29 +21,26 @@ Slots:
     Items:
       - '12xAGMRanks:RedBorder'
       - '3xAGMRanks:BlueBorder'
-    Menu:
-      Slots: [ 31 ]
-      Items: [ Menu ]
-    Next:
-      Slots: [ 35 ]
-      Items: [ Next ]
-    Previous:
-      Slots: [ 27 ]
-      Items: [ Previous ]
+  Menu:
+    Slots: [ 31 ]
+    Items: [ Menu ]
+  Next:
+    Slots: [ 35 ]
+    Items: [ Next ]
+  Previous:
+    Slots: [ 27 ]
+    Items: [ Previous ]
 
 Items:
   Next:
-    Material:
-      ID: Custom_Head
-      Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjVhODRlNjM5NGJhZjhiZDc5NWZlNzQ3ZWZjNTgyY2RlOTQxNGZjY2YyZjFjODYwOGYxYmUxOGMwZTA3OTEzOCJ9fX0=
+    CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjVhODRlNjM5NGJhZjhiZDc5NWZlNzQ3ZWZjNTgyY2RlOTQxNGZjY2YyZjFjODYwOGYxYmUxOGMwZTA3OTEzOCJ9fX0=
     Name: '&e&lMove to right'
   Previous:
-    Material:
-      ID: Custom_Head
-      Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGE1M2QwNDc5N2I0N2E2ODQ4NGQxMTEwMjVkOTQwYTM0ODg2YTBmYThkYzgwNmU3NDU3MDI0YTg3ZjFhYmQ1NiJ9fX0=
+    CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGE1M2QwNDc5N2I0N2E2ODQ4NGQxMTEwMjVkOTQwYTM0ODg2YTBmYThkYzgwNmU3NDU3MDI0YTg3ZjFhYmQ1NiJ9fX0=
     Name: '&e&lMove to left'
   Menu:
-    Material:
-      ID: Custom_Head
-      Texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY1Y2IxODVjNjQxY2JlNzRlNzBiY2U2ZTZhMWVkOTBhMTgwZWMxYTQyMDM0ZDVjNGFlZDU3YWY1NjBmYzgzYSJ9fX0=
+    CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY1Y2IxODVjNjQxY2JlNzRlNzBiY2U2ZTZhMWVkOTBhMTgwZWMxYTQyMDM0ZDVjNGFlZDU3YWY1NjBmYzgzYSJ9fX0=
     Name: '&5&lReturn'
+  Prestige:
+    CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzA2ZTcwODBhOTBlYTJkMDQ3ZWQ1YTJlY2MzNjhlY2E2ZjRmYTM2MGJkM2NiMTg1M2VjMWYyZjFiNTc2NjFmNCJ9fX0=
+    Name: '&d&lPrestige'

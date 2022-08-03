@@ -23,15 +23,15 @@ Slots:
     Items:
       - '12xAGMRanks:RedBorder'
       - '3xAGMRanks:BlueBorder'
-    Menu:
-      Slots: [ 49 ]
-      Items: [ Menu ]
-    Accept:
-      Slots: [ 10 ]
-      Items: [ Next ]
-    Deny:
-      Slots: [ 16 ]
-      Items: [ Previous ]
+  Menu:
+    Slots: [ 49 ]
+    Items: [ Menu ]
+  Accept:
+    Slots: [ 10 ]
+    Items: [ Accept ]
+  Cancel:
+    Slots: [ 16 ]
+    Items: [ Cancel ]
 
 Items:
   Menu:
@@ -40,6 +40,6 @@ Items:
   Accept:
     Material: GREEN_CONCRETE
     Name: '&a&lRank UP'
-  Deny:
+  Cancel:
     Material: RED_CONCRETE
     Name: '&c&lCancel'

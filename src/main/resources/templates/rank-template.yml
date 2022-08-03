@@ -1,5 +1,5 @@
 # The name of the rank
-Name: %NAME%
+Name: '%NAME%'
 
 ### All the Requirements for 1st rank are ignored completely
 # The money requirement for the rank
@@ -16,23 +16,23 @@ Score: 0
 ### More requirements will be added if you request them! ###
 
 # This item will be used when player has reached this rank (or passed it)
-# Pro-Tip: Try to remind what player gained with this rank in the lore! TODO TipCode
+# Pro-Tip: Try to remind what player gained with this rank in the lore!
 ActiveItem:
   CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTVjZWQ5OTMxYWNlMjNhZmMzNTEzNzEzNzliZjA1YzYzNWFkMTg2OTQzYmMxMzY0NzRlNGU1MTU2YzRjMzcifX19
   Name: '%NAME%'
   Lore:
     - '§7You have received this rank!'
 
-# This item will be used when player has not reached this rank, But has met all requirements!
-# Pro-Tip: List some or all the rewards player gain with this rank! TODO TipCode
+# This item will be used when player has not reached this rank, But has met all requirements! Not usable for 1st rank.
+# Pro-Tip: List some or all the rewards player gain with this rank!
 AvailableItem:
   CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzkxZDQ2ZjE4NDQzNDFiYzk0ZDFmOGY0NTE5ZDNmN2M2ZTJmYTcxOGI2NjRiOTM1NjYxYTI3ODJhNjcwZTIifX19
   Name: '%NAME%'
   Lore:
     - '§7You may receive this rank now!'
 
-# This item will be used when player has not reached this rank and do not meet all the requirements.
-# Pro-Tip: Mention all the requirements of this rank using placeholders! TODO TipCode
+# This item will be used when player has not reached this rank and do not meet all the requirements. Not usable for 1st rank.
+# Pro-Tip: Mention all the requirements of this rank using placeholders!
 UnavailableItem:
   CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTVmM2EzYmU4YWJiY2E4ODU0ODA5YjVkYzQwMDNlY2QzYjA1YTAyNjI0NzNiNThjNmM0ZTAzZDNkNjY3OTczYyJ9fX0=
   Name: '%NAME%'
@@ -43,7 +43,7 @@ UnavailableItem:
 RewardItems: []
 
 # Commands that will be executed as player rank up to this rank
-# Pro-Tip: All commands can have a perm requirement and also tagged with onetime only (In case of rank reset) TODO TipCode
+# Pro-Tip: All commands can have a perm requirement and also tagged with onetime only (In case of rank reset)
 Commands:
   - 'eco give %player_name% 1000'
   - 'give %player_name% minecraft:diamond 10'
