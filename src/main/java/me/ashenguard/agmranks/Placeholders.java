@@ -1,6 +1,6 @@
 package me.ashenguard.agmranks;
-
-import me.ashenguard.agmranks.ranks.Rank;
+ /*
+import me.ashenguard.agmranks.ranks.OldRank;
 import me.ashenguard.agmranks.ranks.RankManager;
 import me.ashenguard.agmranks.ranks.systems.RankingSystem;
 import me.ashenguard.agmranks.users.User;
@@ -22,19 +22,19 @@ public class Placeholders extends PHExtension {
     private final RankManager manager = plugin.rankManager;
     private final RankingSystem system = manager.rankingSystem;
 
-    private final Function<Rank, String> getCost = (rank -> {
+    private final Function<OldRank, String> getCost = (rank -> {
         if (rank == null) return "-";
         return String.valueOf(rank.cost);
     });
-    private final BiFunction<User, Rank, String> getTotalCost = ((user, rank) -> {
+    private final BiFunction<User, OldRank, String> getTotalCost = ((user, rank) -> {
         if (rank == null) return "-";
         return String.valueOf(system.getCost(user, rank));
     });
-    private final Function<Rank, String> getOrdinal = (rank -> {
+    private final Function<OldRank, String> getOrdinal = (rank -> {
         if (rank == null) return "-";
         return rank.getOrdinal();
     });
-    private final BiFunction<User, Rank, String> getName = ((user, rank) -> {
+    private final BiFunction<User, OldRank, String> getName = ((user, rank) -> {
         if (rank == null) return "-";
         return rank.getTranslatedName(user.player);
     });
@@ -63,7 +63,7 @@ public class Placeholders extends PHExtension {
         UserPlaceholder("Experience", ((user, s) -> String.valueOf(user.getExperience())));
     }
 
-    private Rank getRank(User user, String value) {
+    private OldRank getRank(User user, String value) {
         if (value.equalsIgnoreCase("Next") && user.getRank().hasNextRank()) return user.getRank().getNext();
         if (value.equalsIgnoreCase("Max")) return user.getBestAvailableRank();
 
@@ -88,3 +88,4 @@ public class Placeholders extends PHExtension {
         return UserPlaceholder((identifier) -> identifier.endsWith(ended), (identifier) -> identifier.substring(0, identifier.length() - ended.length()), function);
     }
 }
+*/

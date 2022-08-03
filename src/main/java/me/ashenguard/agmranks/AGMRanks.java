@@ -1,10 +1,11 @@
 package me.ashenguard.agmranks;
 
-import me.ashenguard.agmranks.commands.CommandAGMRanks;
-import me.ashenguard.agmranks.commands.CommandRanks;
+import me.ashenguard.agmranks.commands.AGMRanksCommand;
+import me.ashenguard.agmranks.commands.RanksCommand;
 import me.ashenguard.agmranks.ranks.RankManager;
+import me.ashenguard.api.itemstack.ItemLibrary;
 import me.ashenguard.api.messenger.Messenger;
-import me.ashenguard.api.messenger.PlaceholderManager;
+import me.ashenguard.api.placeholder.Translations;
 import me.ashenguard.api.spigot.SpigotPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,10 @@ public final class AGMRanks extends SpigotPlugin {
         return instance;
     }
     public static Messenger getMessenger() {
-        return getInstance().messenger;
+        return instance.messenger;
+    }
+    public static Translations getTranslations() {
+        return instance.translation;
     }
 
     public RankManager rankManager = null;
@@ -44,11 +48,11 @@ public final class AGMRanks extends SpigotPlugin {
 
         new RankManager().loadRanks();
 
-        if (PlaceholderManager.enable) new Placeholders().register();
+        // if (PlaceholderManager.enable) new Placeholders().register();
 
-        new CommandAGMRanks();
-        new CommandRanks();
+        AGMRanksCommand.register(this);
+        RanksCommand.register(this);
 
-        // TODO Login Players
+        ItemLibrary.createLibraryFile(this, "agmranks.yml", "GUI/items.yml");
     }
 }
