@@ -36,6 +36,8 @@ public class BatchGUI extends GUIInventory {
         placeholders.add(new Placeholder("batch_name", (p, s) -> this.batch.getName()));
         placeholders.add(new Placeholder("count_ranks", (p, s) -> String.valueOf(this.batch.getRanks().size())));
         placeholders.add(new Placeholder("current_rank", (p, s) -> this.batch.getPlayerRank(player).getName()));
+
+        update(batch.getPlayerRank(player));
     }
 
     Map<Integer, GUIInventorySlot> defaults = new HashMap<>();

@@ -27,7 +27,7 @@ public class BatchMenuGUI extends GUIInventory {
 
         AtomicInteger count = new AtomicInteger();
         List<Integer> emptySlots = config.getIntegerList("EmptySlots");
-        List<RankBatch> batches = RankManager.getInstance().getRankingBatches().values().stream().filter(batch -> {
+        List<RankBatch> batches = RankManager.getInstance().getRankBatches().values().stream().filter(batch -> {
             if (!batch.hasPermission(player)) return false;
             count.getAndIncrement();
             return count.get() <= emptySlots.size();
@@ -40,7 +40,7 @@ public class BatchMenuGUI extends GUIInventory {
         List<Integer> slots = emptySlots.subList(Math.max(0, start), Math.min(emptySlots.size(), end));
 
         for (int i = 0; i < slots.size(); i++) {
-            int index = emptySlots.get(i);
+            int index = slots.get(i);
             RankBatch batch = batches.get(i);
             GUIInventorySlot slot = new GUIInventorySlot(index);
             slot.addItem(batch.getIcon()).setAction((Consumer<InventoryClickEvent>) event -> BatchGUI.showBatch(player, batch));

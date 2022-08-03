@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class BatchRankGUI extends GUIInventory {
-    private static final Configuration config = new Configuration(AGMRanks.getInstance(), "GUI/batch.yml", true);
+    private static final Configuration config = new Configuration(AGMRanks.getInstance(), "GUI/batch-rank.yml", true);
     private static final List<Integer> rewardSlots = config.getIntegerList("EmptySlots");
     private static final List<Integer> rankSlots = config.getIntegerList("RankIconSlots");
 
