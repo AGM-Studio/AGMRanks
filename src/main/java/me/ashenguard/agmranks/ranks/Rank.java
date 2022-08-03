@@ -1,8 +1,7 @@
 package me.ashenguard.agmranks.ranks;
 
 import me.ashenguard.agmranks.AGMRanks;
-import me.ashenguard.agmranks.api.LuckPermsAPI;
-import me.ashenguard.agmranks.commands.CommandExecutor;
+import me.ashenguard.agmranks.commands.CommandReward;
 import me.ashenguard.agmranks.ranks.requirements.LivetimeRequirement;
 import me.ashenguard.agmranks.ranks.requirements.MoneyRequirement;
 import me.ashenguard.agmranks.ranks.requirements.PlaytimeRequirement;
@@ -10,13 +9,7 @@ import me.ashenguard.agmranks.ranks.requirements.ScoreRequirement;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.placeholder.Placeholder;
-import me.ashenguard.api.utils.encoding.Alphabetic;
 import me.ashenguard.api.utils.encoding.Ordinal;
-import me.ashenguard.exceptions.RankLoadingException;
-import net.luckperms.api.model.user.User;
-import net.luckperms.api.node.Node;
-import net.luckperms.api.track.Track;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -38,30 +31,17 @@ public class Rank {
     private final PlaceholderItemStack unavailableItem;
 
     private final List<PlaceholderItemStack> rewards = new ArrayList<>();
-    private final List<CommandExecutor> commands = new ArrayList<>();
+    private final List<CommandReward> commands = new ArrayList<>();
 
     private final List<Placeholder> placeholders = new ArrayList<>();
 
-    public Rank(RankBatch batch, int id, Track track) {
-        List<Placeholder> placeholders = Collections.singletonList(
-                new Placeholder("NAME", (p, s) -> String.format("Rank %s", Alphabetic.to(id)))
-        );
-        Configuration config = new Configuration(
-                AGMRanks.getInstance(),
-                String.format("ranks/%s/%s.yml", batch.getID(), Ordinal.to(id)),
-                AGMRanks.getInstance().getResource("templates/rank-template.yml"),
-                string -> {
-                    for (Placeholder placeholder: placeholders) string = placeholder.apply(string, null);
-                    return string;
-                }
-        );
-
-        if (track != null && track.getGroups().size() < id) throw new RankLoadingException("Track do not accept anymore groups");
-
+    public Rank(RankBatch batch, int id) {
         this.id = id;
         this.batch = batch;
-        this.name = config.getString("Name", "UNNAMED");
 
+        Configuration config = new Configuration(AGMRanks.getInstance(), String.format("ranks/%s/%s.yml", batch.getID(), Ordinal.to(id + 1)));
+
+        this.name = config.getString("Name", "UNNAMED");
         this.activeItem = PlaceholderItemStack.fromSection(config.getConfigurationSection("ActiveItem"));
         this.availableItem = PlaceholderItemStack.fromSection(config.getConfigurationSection("AvailableItem"));
         this.unavailableItem = PlaceholderItemStack.fromSection(config.getConfigurationSection("UnavailableItem"));
@@ -69,7 +49,7 @@ public class Rank {
         List<?> rewards = config.getList("Rewards", Collections.EMPTY_LIST);
         for (Object reward:rewards) AGMRanks.getMessenger().info(reward.getClass().getSimpleName());
 
-        config.getStringList("Commands").stream().map(CommandExecutor::new).forEach(commands::add);
+        config.getStringList("Commands").forEach(cmd -> commands.add(new CommandReward(batch, cmd)));
 
         // Allowing auto rank up give the first rank to all players
         if (id == 0) moneyRequirement = null;
@@ -95,23 +75,9 @@ public class Rank {
             requirements.forEach(requirement -> requirement.effect(player));
 
             executeCommands(player);
-            updatePermissionGroup(player);
             batch.setPlayerRank(player, this);
             batch.setPlayerHighRank(player, this, false);
         }
-    }
-
-    public void updatePermissionGroup(Player player) {
-        Bukkit.getScheduler().runTaskAsynchronously(AGMRanks.getInstance(), () -> {
-            List<String> groups = this.batch.getTrack().getGroups();
-            User user = LuckPermsAPI.getUser(player.getUniqueId());
-            for (int i = 0; i < groups.size(); i++) {
-                Node node = Node.builder(String.format("group.%s", groups.get(i))).build();
-                if (i == this.getID()) user.data().add(node);
-                else user.data().remove(node);
-            }
-            LuckPermsAPI.saveUser(user);
-        });
     }
 
     public boolean areRequirementsMet(Player player) {
@@ -125,6 +91,13 @@ public class Rank {
     }
     public boolean hasCost() {
         return moneyRequirement != null;
+    }
+
+    public PlaceholderItemStack getPlayerItem(Player player) {
+        Rank rank = this.batch.getPlayerRank(player);
+        if (rank.getID() >= this.getID()) return getActiveItem();
+        if (rank.areRequirementsMet(player, true)) return getAvailableItem();
+        return getUnavailableItem();
     }
 
     public PlaceholderItemStack getActiveItem() {
