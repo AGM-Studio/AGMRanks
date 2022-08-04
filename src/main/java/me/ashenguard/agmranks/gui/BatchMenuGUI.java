@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class BatchMenuGUI extends GUIInventory {
     private static final Configuration config = new Configuration(AGMRanks.getInstance(), "GUI/batch-menu.yml", true);
 
-    protected static void showBatchMenu(Player player) {
+    public static void show(Player player) {
         new BatchMenuGUI(player).show();
     }
 
@@ -43,7 +43,7 @@ public class BatchMenuGUI extends GUIInventory {
             int index = slots.get(i);
             RankBatch batch = batches.get(i);
             GUIInventorySlot slot = new GUIInventorySlot(index);
-            slot.addItem(batch.getIcon()).setAction((Consumer<InventoryClickEvent>) event -> BatchGUI.showBatch(player, batch));
+            slot.addItem(batch.getIcon()).setAction((Consumer<InventoryClickEvent>) event -> BatchGUI.show(player, batch));
             setSlot(index, slot);
         }
     }

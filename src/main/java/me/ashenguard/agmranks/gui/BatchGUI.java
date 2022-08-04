@@ -24,7 +24,7 @@ public class BatchGUI extends GUIInventory {
     private final RankBatch batch;
     private Rank center;
 
-    protected static void showBatch(Player player, RankBatch batch) {
+    public static void show(Player player, RankBatch batch) {
         new BatchGUI(player, batch).show();
     }
 
@@ -54,7 +54,7 @@ public class BatchGUI extends GUIInventory {
             else {
                 GUIInventorySlot inventorySlot = new GUIInventorySlot(slot);
                 inventorySlot.addItem(rank.getPlayerItem(this.player));
-                inventorySlot.setAction((Consumer<InventoryClickEvent>) event -> BatchRankGUI.showBatchRank(player, rank));
+                inventorySlot.setAction((Consumer<InventoryClickEvent>) event -> BatchRankGUI.show(player, rank));
                 setSlot(slot, inventorySlot);
             }
         }
@@ -64,7 +64,7 @@ public class BatchGUI extends GUIInventory {
     protected Function<InventoryClickEvent, Boolean> getSlotActionByKey(String key) {
         return switch (key) {
             case "Menu" -> (event) -> {
-                BatchMenuGUI.showBatchMenu(player);
+                BatchMenuGUI.show(player);
                 return true;
             };
             case "Next" -> (event) -> {

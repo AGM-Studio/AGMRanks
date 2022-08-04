@@ -20,7 +20,7 @@ public class BatchRankGUI extends GUIInventory {
 
     private final Rank rank;
 
-    protected static void showBatchRank(Player player, Rank rank) {
+    public static void show(Player player, Rank rank) {
         new BatchRankGUI(player, rank).show();
     }
 
@@ -45,7 +45,7 @@ public class BatchRankGUI extends GUIInventory {
     protected Function<InventoryClickEvent, Boolean> getSlotActionByKey(String key) {
         return switch (key) {
             case "Menu", "Cancel" -> (event) -> {
-                BatchGUI.showBatch(player, this.rank.getBatch());
+                BatchGUI.show(player, this.rank.getBatch());
                 return true;
             };
             case "Accept" -> (event) -> {

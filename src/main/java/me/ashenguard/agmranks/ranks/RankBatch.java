@@ -117,7 +117,7 @@ public class RankBatch {
     }
 
     public boolean hasPermission(Player player) {
-        return permission == null || permission.length() > 0 || player.hasPermission(permission);
+        return permission == null || permission.length() == 0 || player.hasPermission(permission);
     }
 
     public String getID() {
