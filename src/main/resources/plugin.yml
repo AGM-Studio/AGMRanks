@@ -1,5 +1,5 @@
 name: AGMRanks
-version: 5.1.0
+version: 6.0.0
 main: me.ashenguard.agmranks.AGMRanks
 softdepend: [Vault, PlaceholderAPI, AGMCore]
 authors: [Ashenguard]

@@ -6,10 +6,12 @@ import me.ashenguard.api.spigot.SpigotPlugin;
 public enum Messages implements Message {
     // Errors
     InvalidBatchNameError("§cPlease specify a valid id for this instance, A valid id only contains a-z and 0-9, starting with a-z."),
-    BatchExistsError("§cThis batch already exists please use another id."),
+    BatchExistsError("§cThis batch already exists."),
+    BatchNotFoundError("§cBatch not found."),
+
+    PlayerNotFoundError("§cPlayer not found."),
     // Rank Messages
-    RankBatchCreatedNormal("The normal batch with the default rank has been created."),
-    RankBatchCreatedTracked("The track batch rank has been created.");
+    RankBatchCreated("The batch with the default rank has been created.");
 
     private final String path;
     private final String value;

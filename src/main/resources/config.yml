@@ -22,14 +22,6 @@
 Prefix: AGMRanks
 CheckUpdates: true
 
-RankingSystem:
-  Type: Money
-  UseExperienceOnRanking: true
-  AutoRankup: true
-  AutoRankupTaskTimer: 60
-  SellRanksForMoney: false
-  PaybackOnSell: 50.0
-
 Debug:
   Enable: false
   General: true

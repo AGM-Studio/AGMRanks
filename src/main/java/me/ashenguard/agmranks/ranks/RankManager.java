@@ -20,6 +20,12 @@ public class RankManager {
     public static RankManager getInstance() {
         return instance;
     }
+    public static Map<String, RankBatch> getBatches() {
+        return getInstance().getRankBatches();
+    }
+    public static RankBatch getBatch(String name) {
+        return getInstance().getRankBatch(name);
+    }
 
     private final File folder = new File(AGMRanks.getInstance().getDataFolder(), "ranks");
     private final Map<String, RankBatch> batches = new HashMap<>();
