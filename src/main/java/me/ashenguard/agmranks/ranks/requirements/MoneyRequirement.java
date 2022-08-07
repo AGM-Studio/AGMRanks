@@ -1,6 +1,7 @@
 package me.ashenguard.agmranks.ranks.requirements;
 
 import me.ashenguard.agmranks.ranks.Requirement;
+import me.ashenguard.lib.hooks.VaultAPI;
 import org.bukkit.entity.Player;
 
 public class MoneyRequirement extends Requirement {
@@ -10,13 +11,17 @@ public class MoneyRequirement extends Requirement {
         this.amount = amount;
     }
 
+    public double getAmount() {
+        return amount;
+    }
+
     @Override
     public boolean isMet(Player player) {
-        return true; // Todo VaultAPI.getPlayerBalance(player) >= amount;
+        return VaultAPI.getPlayerBalance(player) >= amount;
     }
 
     @Override
     public void effect(Player player) {
-        // AGMRanks.getVault().withdrawPlayerMoney(player, amount);
+        VaultAPI.withdrawPlayerMoney(player, amount);
     }
 }
