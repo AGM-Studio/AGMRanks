@@ -10,6 +10,7 @@ public class LivetimeRequirement extends Requirement {
     private final long amount;
 
     public LivetimeRequirement(Rank rank, long amount) {
+        super(rank);
         this.amount = amount;
 
         rank.getBatch().updateWith(PlayerDeathEvent.class);

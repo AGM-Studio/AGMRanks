@@ -57,10 +57,10 @@ public class Rank {
         if (id == 0) moneyRequirement = null;
         else {
             double cost = config.getDouble(Arrays.asList("Cost", "Money"), 0);
-            moneyRequirement = cost > 0 ? new MoneyRequirement(cost) : null;
+            moneyRequirement = cost > 0 ? new MoneyRequirement(this, cost) : null;
 
             long playtime = config.getLong("Playtime", 0);
-            if (playtime > 0) requirements.add(new PlaytimeRequirement(playtime));
+            if (playtime > 0) requirements.add(new PlaytimeRequirement(this, playtime));
 
             long livetime = config.getLong("Livetime", 0);
             if (livetime > 0) requirements.add(new LivetimeRequirement(this, livetime));
@@ -68,6 +68,15 @@ public class Rank {
             long score = config.getLong("Score", 0);
             if (score > 0) requirements.add(new ScoreRequirement(this, score));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Requirement> T getRequirement(Class<T> cls) {
+        if (MoneyRequirement.class == cls) return (T) moneyRequirement;
+        for (Requirement requirement: requirements)
+            if (requirement.getClass() == cls) return (T) requirement;
+
+        return null;
     }
 
     public void rankup(Player player) {
