@@ -2,7 +2,6 @@ package me.ashenguard.agmranks.gui;
 
 import me.ashenguard.agmranks.AGMRanks;
 import me.ashenguard.agmranks.ranks.RankBatch;
-import me.ashenguard.agmranks.ranks.RankManager;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.gui.GUIInventory;
 import me.ashenguard.api.gui.GUIInventorySlot;
@@ -27,7 +26,7 @@ public class BatchMenuGUI extends GUIInventory {
 
         AtomicInteger count = new AtomicInteger();
         List<Integer> emptySlots = config.getIntegerList("EmptySlots");
-        List<RankBatch> batches = RankManager.getInstance().getRankBatches().values().stream().filter(batch -> {
+        List<RankBatch> batches = AGMRanks.getBatches().stream().filter(batch -> {
             if (!batch.hasPermission(player)) return false;
             count.getAndIncrement();
             return count.get() <= emptySlots.size();

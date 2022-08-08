@@ -3,6 +3,7 @@ package me.ashenguard.agmranks.player;
 import me.ashenguard.agmranks.Utils;
 import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.agmranks.ranks.RankBatch;
+import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerBatchInfo {
@@ -41,6 +42,9 @@ public class PlayerBatchInfo {
     public Rank getRank() {
         return current;
     }
+    public void setRank(int id) {
+        setRank(batch.getRank(id));
+    }
     public void setRank(Rank rank) {
         if (rank.getBatch() != batch) return;
         Utils.setPlayerData(ranked.player, batch.getRankPDCKey(), PersistentDataType.INTEGER, rank.getID());
@@ -49,6 +53,9 @@ public class PlayerBatchInfo {
 
     public Rank getHighRank() {
         return highest;
+    }
+    public void setHighRank(int id, boolean overwrite) {
+        setHighRank(batch.getRank(id), overwrite);
     }
     public void setHighRank(Rank rank, boolean overwrite) {
         if (rank.getBatch() != batch) return;
@@ -62,5 +69,11 @@ public class PlayerBatchInfo {
     public void setPrestige(int prestige) {
         Utils.setPlayerData(ranked.player, batch.getPrestigePDCKey(), PersistentDataType.INTEGER, prestige);
         this.prestige = prestige;
+    }
+
+    public PlaceholderItemStack getRankItem(Rank rank) {
+        if (rank.getID() >= current.getID()) return rank.getActiveItem();
+        if (rank.areRequirementsMet(ranked.player, true)) return rank.getAvailableItem();
+        return rank.getUnavailableItem();
     }
 }

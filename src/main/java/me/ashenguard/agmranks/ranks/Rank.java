@@ -2,6 +2,8 @@ package me.ashenguard.agmranks.ranks;
 
 import me.ashenguard.agmranks.AGMRanks;
 import me.ashenguard.agmranks.commands.CommandReward;
+import me.ashenguard.agmranks.player.PlayerBatchInfo;
+import me.ashenguard.agmranks.player.RankedPlayer;
 import me.ashenguard.agmranks.ranks.requirements.LivetimeRequirement;
 import me.ashenguard.agmranks.ranks.requirements.MoneyRequirement;
 import me.ashenguard.agmranks.ranks.requirements.PlaytimeRequirement;
@@ -69,14 +71,17 @@ public class Rank {
     }
 
     public void rankup(Player player) {
-        if (batch.getPlayerRank(player) != getPrevious()) return;
+        PlayerBatchInfo info = RankedPlayer.get(player).getBatchInfo(batch);
+
+        if (info.getRank() != getPrevious()) getPrevious().rankup(player);
+        if (info.getRank() != getPrevious()) return;
         if (this.areRequirementsMet(player, true)) {
             moneyRequirement.effect(player);
             requirements.forEach(requirement -> requirement.effect(player));
 
             executeCommands(player);
-            batch.setPlayerRank(player, this);
-            batch.setPlayerHighRank(player, this, false);
+            info.setRank(this);
+            info.setHighRank(this, false);
         }
     }
 
@@ -86,18 +91,12 @@ public class Rank {
         return true;
     }
     public boolean areRequirementsMet(Player player, boolean costCovered) {
-        if (costCovered && hasCost()) return moneyRequirement.isMet(player) && areRequirementsMet(player);
+        if (costCovered && hasCost())
+            return moneyRequirement.isMet(player) && areRequirementsMet(player);
         return areRequirementsMet(player);
     }
     public boolean hasCost() {
         return moneyRequirement != null;
-    }
-
-    public PlaceholderItemStack getPlayerItem(Player player) {
-        Rank rank = this.batch.getPlayerRank(player);
-        if (rank.getID() >= this.getID()) return getActiveItem();
-        if (rank.areRequirementsMet(player, true)) return getAvailableItem();
-        return getUnavailableItem();
     }
 
     public PlaceholderItemStack getActiveItem() {
@@ -126,7 +125,7 @@ public class Rank {
     }
 
     public void executeCommands(Player player) {
-        if (batch.getPlayerHighRank(player).getID() >= this.getID()) return;
+        if (RankedPlayer.get(player).getBatchInfo(batch).getHighRank().getID() >= this.getID()) return;
 
         batch.executeCommands(player);
         commands.forEach(command -> command.execute(player));

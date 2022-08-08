@@ -2,8 +2,8 @@ package me.ashenguard.agmranks.commands;
 
 import me.ashenguard.agmranks.AGMRanks;
 import me.ashenguard.agmranks.Messages;
+import me.ashenguard.agmranks.player.PlayerBatchInfo;
 import me.ashenguard.agmranks.ranks.RankBatch;
-import me.ashenguard.agmranks.ranks.RankManager;
 import me.ashenguard.api.commands.AGMCommand;
 import me.ashenguard.api.commands.AGMCommandException;
 import me.ashenguard.api.commands.annotations.AGMCommandHandler;
@@ -34,19 +34,19 @@ public class AGMRanksCommand extends AGMCommand {
 
     @AGMSubcommandHandler("create batch")
     public void createBatch(CommandSender sender, String id, String name) {
-        AGMCommandException.check(this, RankManager.NAME_PATTERN.test(id), Messages.InvalidBatchNameError);
-        AGMCommandException.check(this, RankManager.getInstance().getRankBatch(id) == null, Messages.BatchExistsError);
+        AGMCommandException.check(this, AGMRanks.BATCH_NAME_PATTERN.test(id), Messages.InvalidBatchNameError);
+        AGMCommandException.check(this, AGMRanks.getBatch(id) == null, Messages.BatchExistsError);
 
-        RankBatch.create(id, name, 0);
+        RankBatch.create(id, name);
 
         plugin.messenger.response(sender, Messages.RankBatchCreated);
     }
 
     @AGMSubcommandHandler("create rank")
     public void createRank(CommandSender sender, String batch) {
-        AGMCommandException.check(this, RankManager.getBatch(batch) != null, Messages.BatchNotFoundError);
+        AGMCommandException.check(this, AGMRanks.getBatch(batch) != null, Messages.BatchNotFoundError);
 
-        RankManager.getBatch(batch).createRank();
+        AGMRanks.getBatch(batch).createRank();
 
         AGMRanks.getMessenger().response(sender, "A new rank has been added to the batch");
     }
@@ -54,14 +54,15 @@ public class AGMRanksCommand extends AGMCommand {
     @AGMSubcommandHandler("reset")
     public void reset(CommandSender sender, Player player, String batch, boolean reset) {
         AGMCommandException.check(this, player != null, Messages.PlayerNotFoundError);
-        AGMCommandException.check(this, RankManager.getBatch(batch) != null, Messages.BatchNotFoundError);
+        AGMCommandException.check(this, AGMRanks.getBatch(batch) != null, Messages.BatchNotFoundError);
 
-        RankBatch match = RankManager.getBatch(batch);
+        RankBatch match = AGMRanks.getBatch(batch);
+        PlayerBatchInfo info = match.getPlayerInfo(player);
 
-        match.setPlayerPrestige(player, 0);
-        match.setPlayerRank(player, match.getRank(0));
-        match.setPlayerScore(player, 0);
-        if (reset) match.setPlayerHighRank(player, match.getRank(0), true);
+        info.setPrestige(0);
+        info.setRank(0);
+        info.setScore(0);
+        info.setHighRank(0, reset);
 
         AGMRanks.getMessenger().response(sender, "Player ranking has been reset to 1st rank.");
     }

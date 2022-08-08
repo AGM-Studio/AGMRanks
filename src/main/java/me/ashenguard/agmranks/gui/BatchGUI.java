@@ -1,6 +1,8 @@
 package me.ashenguard.agmranks.gui;
 
 import me.ashenguard.agmranks.AGMRanks;
+import me.ashenguard.agmranks.player.PlayerBatchInfo;
+import me.ashenguard.agmranks.player.RankedPlayer;
 import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.agmranks.ranks.RankBatch;
 import me.ashenguard.api.Configuration;
@@ -20,8 +22,9 @@ import java.util.function.Function;
 public class BatchGUI extends GUIInventory {
     private static final Configuration config = new Configuration(AGMRanks.getInstance(), "GUI/batch.yml", true);
     private static final List<Integer> slots = config.getIntegerList("EmptySlots");
-    
+
     private final RankBatch batch;
+    private final PlayerBatchInfo info;
     private Rank center;
 
     public static void show(Player player, RankBatch batch) {
@@ -31,13 +34,14 @@ public class BatchGUI extends GUIInventory {
     protected BatchGUI(Player player, RankBatch batch) {
         super(player, config);
         this.batch = batch;
-        this.center = batch.getPlayerRank(player);
+        this.info = RankedPlayer.get(player).getBatchInfo(batch);
+        this.center = info.getRank();
 
         placeholders.add(new Placeholder("batch_name", (p, s) -> this.batch.getName()));
         placeholders.add(new Placeholder("count_ranks", (p, s) -> String.valueOf(this.batch.getRanks().size())));
-        placeholders.add(new Placeholder("current_rank", (p, s) -> this.batch.getPlayerRank(player).getName()));
+        placeholders.add(new Placeholder("current_rank", (p, s) -> this.info.getRank().getName()));
 
-        update(batch.getPlayerRank(player));
+        update(this.info.getRank());
     }
 
     Map<Integer, GUIInventorySlot> defaults = new HashMap<>();
@@ -53,7 +57,7 @@ public class BatchGUI extends GUIInventory {
             if (rank == null) setSlot(slot, defaults.get(slot));
             else {
                 GUIInventorySlot inventorySlot = new GUIInventorySlot(slot);
-                inventorySlot.addItem(rank.getPlayerItem(this.player));
+                inventorySlot.addItem(info.getRankItem(rank));
                 inventorySlot.setAction((Consumer<InventoryClickEvent>) event -> BatchRankGUI.show(player, rank));
                 setSlot(slot, inventorySlot);
             }

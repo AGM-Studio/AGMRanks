@@ -1,6 +1,8 @@
 package me.ashenguard.agmranks.gui;
 
 import me.ashenguard.agmranks.AGMRanks;
+import me.ashenguard.agmranks.player.PlayerBatchInfo;
+import me.ashenguard.agmranks.player.RankedPlayer;
 import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.gui.GUIInventory;
@@ -36,9 +38,8 @@ public class BatchRankGUI extends GUIInventory {
             setSlot(slot, new GUIInventorySlot(slot).addItem(rewards.get(i)));
         }
 
-        for (int slot: rankSlots) {
-            setSlot(slot, new GUIInventorySlot(slot).addItem(rank.getPlayerItem(player)));
-        }
+        PlayerBatchInfo info = RankedPlayer.get(player).getBatchInfo(rank.getBatch());
+        for (int slot: rankSlots) setSlot(slot, new GUIInventorySlot(slot).addItem(info.getRankItem(rank)));
     }
 
     @Override
@@ -49,7 +50,7 @@ public class BatchRankGUI extends GUIInventory {
                 return true;
             };
             case "Accept" -> (event) -> {
-                if (this.rank.areRequirementsMet(player, true)); // Todo rank up
+                if (this.rank.areRequirementsMet(player, true)) rank.rankup(player);
                 return true;
             };
             default -> null;

@@ -1,8 +1,9 @@
 package me.ashenguard.agmranks.ranks;
 
 import me.ashenguard.agmranks.AGMRanks;
-import me.ashenguard.agmranks.Utils;
 import me.ashenguard.agmranks.commands.CommandReward;
+import me.ashenguard.agmranks.player.PlayerBatchInfo;
+import me.ashenguard.agmranks.player.RankedPlayer;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import me.ashenguard.api.placeholder.Placeholder;
@@ -14,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,22 +35,23 @@ public class RankBatch {
     private final int prestiges;
     private final int multiplier;
 
-    private final String SCORE_PDC_KEY, RANK_PDC_KEY, HIGHRANK_PDC_KEY;
+    private final String SCORE_PDC_KEY, RANK_PDC_KEY, HIGHRANK_PDC_KEY, PRESTIGE_PDC_KEY;
 
-    public RankBatch(String id) {
-        this(id, id);
+    private static Configuration getConfig(String filename, String name) {
+        return new Configuration(AGMRanks.getInstance(), String.format("ranks/%s/config.yml", filename), "templates/batch-template.yml", new Placeholder("NAME", (p, s) -> name));
     }
 
-    public RankBatch(String filename, String name) {
-        Configuration config = new Configuration(
-                AGMRanks.getInstance(),
-                String.format("ranks/%s/config.yml", filename),
-                "templates/batch-template.yml",
-                new Placeholder("NAME", (p, s) -> name)
-        );
+    public static RankBatch from(File folder) {
+        return new RankBatch(folder);
+    }
 
-        this.id = filename;
-        this.name = config.getString("Name", filename);
+    private RankBatch(File folder) {
+        this.id = folder.getName();
+
+        String name = (id.substring(0, 1).toUpperCase() + id.substring(1).toLowerCase()).replace("_", " ");
+        Configuration config = getConfig(this.id, name);
+
+        this.name = config.getString("Name", name);
         this.permission = config.getString("Permission", null);
 
         PlaceholderItemStack icon = PlaceholderItemStack.fromSection(config.getConfigurationSection("Icon"));
@@ -61,27 +62,22 @@ public class RankBatch {
 
         config.getStringList("Commands").forEach(cmd -> commands.add(new CommandReward(this, cmd)));
 
-        int id = 0;
-        File folder = getFolder();
-        while (new File(folder,Ordinal.to(id + 1) + ".yml").exists()) ranks.add(new Rank(this, id++));
+        int i = 0;
+        while (new File(folder,Ordinal.to(i + 1) + ".yml").exists()) ranks.add(new Rank(this, i++));
 
-        SCORE_PDC_KEY = String.format("ranking_%s_score", filename);
-        RANK_PDC_KEY = String.format("ranking_%s_rank", filename);
-        HIGHRANK_PDC_KEY = String.format("ranking_%s_highrank", filename);
+        RANK_PDC_KEY = String.format("ranking_%s_rank", this.id);
+        SCORE_PDC_KEY = String.format("ranking_%s_score", this.id);
+        HIGHRANK_PDC_KEY = String.format("ranking_%s_highrank", this.id);
+        PRESTIGE_PDC_KEY = String.format("ranking_%s_prestige", this.id);
 
         Bukkit.getScheduler().runTaskTimer(AGMRanks.getInstance(), this::autoRankup, 0, 600);
     }
 
-    public static RankBatch create(String id, String name, int sorting) {
-        new Configuration(
-                AGMRanks.getInstance(),
-                String.format("ranks/%s/config.yml", id),
-                "templates/batch-config.yml",
-                new Placeholder("NAME", (p, s) -> name),
-                new Placeholder("SORTING", (p, s) -> String.valueOf(sorting))
-        );
+    public static RankBatch create(String id, String name) {
+        Configuration config = getConfig(id, name);
+        File folder = new File(AGMRanks.getInstance().getDataFolder(), String.format("ranks/%s", id));
 
-        RankBatch batch = new RankBatch(id);
+        RankBatch batch = new RankBatch(folder);
         if (batch.ranks.size() == 0) batch.createRank();
 
         return batch;
@@ -160,13 +156,15 @@ public class RankBatch {
     }
 
     public void update(Player player) {
-        Rank current = getPlayerRank(player);
+        PlayerBatchInfo info = RankedPlayer.get(player).getBatchInfo(this);
+
+        Rank current = info.getRank();
         for (Rank rank: ranks) {
             if (rank.getID() > current.getID()) break;
             if (rank.areRequirementsMet(player)) continue;
 
             Rank reset = rank.getPrevious();
-            setPlayerRank(player, reset);
+            info.setRank(reset);
             AGMRanks.getMessenger().response(player, AGMRanks.getTranslations().get("RankReset"));
             break;
         }
@@ -174,11 +172,13 @@ public class RankBatch {
 
     private void autoRankup() {
         Bukkit.getOnlinePlayers().forEach(player -> {
+            PlayerBatchInfo info = RankedPlayer.get(player).getBatchInfo(this);
+
             if (!this.hasPermission(player)) return;
-            Rank rank = getPlayerRank(player);
+            Rank rank = info.getRank();
             if (rank == null) {
                 rank = this.getRank(0);
-                setPlayerRank(player, rank);
+                info.setRank(rank);
             }
             while ((rank = rank.getNext()) != null) {
                 if (rank.hasCost()) return;
@@ -187,41 +187,20 @@ public class RankBatch {
         });
     }
 
-    public long getPlayerScore(Player player) {
-        return Utils.getPlayerData(player, SCORE_PDC_KEY, PersistentDataType.LONG, (long) 0);
+    public final String getScorePDCKey() {
+        return SCORE_PDC_KEY;
+    }
+    public final String getRankPDCKey() {
+        return RANK_PDC_KEY;
+    }
+    public final String getHighRankPDCKey() {
+        return HIGHRANK_PDC_KEY;
+    }
+    public final String getPrestigePDCKey() {
+        return PRESTIGE_PDC_KEY;
     }
 
-    public void setPlayerScore(Player player, long score) {
-        Utils.setPlayerData(player, SCORE_PDC_KEY, PersistentDataType.LONG, score);
-    }
-
-    public Rank getPlayerRank(Player player) {
-        int id = Utils.getPlayerData(player, RANK_PDC_KEY, PersistentDataType.INTEGER, -1);
-        if (0 > id || id >= ranks.size()) return null;
-        return ranks.get(id);
-    }
-
-    public void setPlayerRank(Player player, Rank rank) {
-        if (rank.getBatch() != this) return;
-        Utils.setPlayerData(player, RANK_PDC_KEY, PersistentDataType.INTEGER, rank.getID());
-    }
-
-    public Rank getPlayerHighRank(Player player) {
-        int id = Utils.getPlayerData(player, HIGHRANK_PDC_KEY, PersistentDataType.INTEGER, -1);
-        if (0 > id || id >= ranks.size()) return null;
-        return ranks.get(id);
-    }
-
-    public void setPlayerHighRank(Player player, Rank rank, boolean overwrite) {
-        if (rank.getBatch() != this) return;
-        Utils.setPlayerData(player, RANK_PDC_KEY, PersistentDataType.INTEGER, rank.getID(), overwrite ? null : integer -> integer != null && integer < rank.getID());
-    }
-
-    public int getPlayerPrestige(Player player) {
-        return Utils.getPlayerData(player, SCORE_PDC_KEY, PersistentDataType.INTEGER, 0);
-    }
-
-    public void setPlayerPrestige(Player player, int prestige) {
-        Utils.setPlayerData(player, SCORE_PDC_KEY, PersistentDataType.INTEGER, prestige);
+    public PlayerBatchInfo getPlayerInfo(Player player) {
+        return RankedPlayer.get(player).getBatchInfo(this);
     }
 }

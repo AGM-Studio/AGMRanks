@@ -1,7 +1,7 @@
 package me.ashenguard.agmranks.player;
 
+import me.ashenguard.agmranks.AGMRanks;
 import me.ashenguard.agmranks.ranks.RankBatch;
-import me.ashenguard.agmranks.ranks.RankManager;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class RankedPlayer {
     protected RankedPlayer(Player player) {
         this.player = player;
 
-        for (RankBatch batch: RankManager.getBatches().values())
+        for (RankBatch batch: AGMRanks.getBatches())
             if (batch.hasPermission(player)) batches.put(batch, new PlayerBatchInfo(this, batch));
     }
 

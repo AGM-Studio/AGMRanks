@@ -2,11 +2,11 @@
 Name: '%NAME%'
 
 # This number will be used to sort the GUI slots
-Sorting: %SORTING%
+Sorting: 0
 
 # The item to be showed in batch menu
 Icon:
-  Material: DIAMOND_SOWRD
+  Material: DIAMOND_SWORD
   Name: '§6%NAME%'
 
 # Required permission to allow players access this batch!
