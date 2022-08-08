@@ -57,7 +57,7 @@ public final class AGMRanks extends SpigotPlugin {
         ItemLibrary.createLibraryFile(this, "agmranks.yml", "GUI/items.yml");
     }
 
-    public static final Predicate<String> BATCH_NAME_PATTERN = Pattern.compile("^[a-z][a-z0-9]*$").asPredicate();
+    public static final Predicate<String> BATCH_NAME_PATTERN = Pattern.compile("^[a-z][a-z\\d]*$").asPredicate();
     private static final Set<RankBatch> batches = new HashSet<>();
 
     private void loadBatches() {

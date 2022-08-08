@@ -51,7 +51,7 @@ public class CommandReward {
     }
 
     public void execute(Player player) {
-        if (!prestiges.contains(batch.getPlayerPrestige(player))) return;
+        if (!prestiges.contains(batch.getPlayerInfo(player).getPrestige())) return;
         for (String permission:permissions) if (!player.hasPermission(permission)) return;
 
         if (sudo) Bukkit.dispatchCommand(player, command);

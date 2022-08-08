@@ -23,6 +23,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class RankBatch {
     private final String id;
+    private final int sort;
 
     private final String name;
     private final String permission;
@@ -51,6 +52,7 @@ public class RankBatch {
         String name = (id.substring(0, 1).toUpperCase() + id.substring(1).toLowerCase()).replace("_", " ");
         Configuration config = getConfig(this.id, name);
 
+        this.sort = config.getInt("Sorting", 0);
         this.name = config.getString("Name", name);
         this.permission = config.getString("Permission", null);
 
@@ -125,7 +127,7 @@ public class RankBatch {
     }
 
     public int getSortingKey() {
-        return 0;
+        return sort;
     }
 
     public PlaceholderItemStack getIcon() {

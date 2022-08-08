@@ -44,7 +44,7 @@ public class BatchGUI extends GUIInventory {
         update(this.info.getRank());
     }
 
-    Map<Integer, GUIInventorySlot> defaults = new HashMap<>();
+    final Map<Integer, GUIInventorySlot> defaults = new HashMap<>();
     protected void update(Rank center) {
         if (center == null) return;
 
