@@ -5,27 +5,38 @@ import me.ashenguard.agmranks.ranks.RankBatch;
 import me.ashenguard.api.Configuration;
 import me.ashenguard.api.gui.GUIInventory;
 import me.ashenguard.api.gui.GUIInventorySlot;
+import me.ashenguard.api.gui.GUIManager;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class BatchMenuGUI extends GUIInventory {
     private static final Configuration config = new Configuration(AGMRanks.getInstance(), "GUI/batch-menu.yml", true);
 
-    public static void show(Player player) {
-        new BatchMenuGUI(player).show();
+    private static BatchMenuGUI instance;
+    public static BatchMenuGUI getInstance() {
+        if (instance == null) instance = new BatchMenuGUI();
+        return instance;
     }
 
-    public BatchMenuGUI(Player player) {
-        super(player, config);
+    public static void show(Player player) {
+        GUIManager.open(getInstance(), player);
+    }
 
+    private final List<Integer> emptySlots;
+
+    public BatchMenuGUI() {
+        super(config.getInt("Size"), config.getString("Title"));
+
+        this.emptySlots = config.getIntegerList("EmptySlots");
+    }
+
+    @Override public Map<Integer, GUIInventorySlot> getSlotMapFor(Player player, Object... extras) {
         AtomicInteger count = new AtomicInteger();
-        List<Integer> emptySlots = config.getIntegerList("EmptySlots");
         List<RankBatch> batches = AGMRanks.getBatches().stream().filter(batch -> {
             if (!batch.hasPermission(player)) return false;
             count.getAndIncrement();
@@ -38,17 +49,22 @@ public class BatchMenuGUI extends GUIInventory {
         if (batches.size() % 2 == 0 && emptySlots.size() % 2 == 1) emptySlots.remove((emptySlots.size() + 1) / 2);
         List<Integer> slots = emptySlots.subList(Math.max(0, start), Math.min(emptySlots.size(), end));
 
+        HashMap<Integer, GUIInventorySlot> map = new HashMap<>(SLOT_MAP);
         for (int i = 0; i < slots.size(); i++) {
             int index = slots.get(i);
             RankBatch batch = batches.get(i);
-            GUIInventorySlot slot = new GUIInventorySlot(index);
-            slot.addItem(batch.getIcon()).setAction((Consumer<InventoryClickEvent>) event -> BatchGUI.show(player, batch));
-            setSlot(index, slot);
+            GUIInventorySlot slot = new GUIInventorySlot("Batch", index).addItem(batch.getIcon());
+            slot.setAction(GUIInventorySlot.Action.fromConsumer((event) -> {}
+                    // BatchGUI.show(player, batch)
+            ));
+            map.put(index, slot);
         }
+
+        return map;
     }
 
     @Override
-    protected Function<InventoryClickEvent, Boolean> getSlotActionByKey(String key) {
+    protected GUIInventorySlot.Action getSlotActionByKey(String key) {
         return null;
     }
 }
