@@ -1,6 +1,7 @@
 package me.ashenguard.agmranks.player;
 
 import me.ashenguard.agmranks.AGMRanks;
+import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.agmranks.ranks.RankBatch;
 import org.bukkit.entity.Player;
 
@@ -24,5 +25,9 @@ public class RankedPlayer {
 
     public PlayerBatchInfo getBatchInfo(RankBatch batch) {
         return batches.get(batch);
+    }
+
+    public PlayerBatchInfo getBatchInfoOf(Rank rank) {
+        return batches.get(rank.getBatch());
     }
 }
