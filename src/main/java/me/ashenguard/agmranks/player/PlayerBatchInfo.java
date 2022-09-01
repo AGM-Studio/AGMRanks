@@ -3,6 +3,7 @@ package me.ashenguard.agmranks.player;
 import me.ashenguard.agmranks.Utils;
 import me.ashenguard.agmranks.ranks.Rank;
 import me.ashenguard.agmranks.ranks.RankBatch;
+import me.ashenguard.agmranks.ranks.RankStatus;
 import me.ashenguard.api.itemstack.placeholder.PlaceholderItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -27,8 +28,10 @@ public class PlayerBatchInfo {
 
     private Rank getRankFromKey(String key) {
         int id = Utils.getPlayerData(ranked.player, key, PersistentDataType.INTEGER, -1);
-        if (0 > id || id >= batch.getRanks().size()) return null;
-        return batch.getRanks().get(id);
+        if (0 > id || id >= batch.getRanks().size()) {
+            Utils.setPlayerData(ranked.player, key, PersistentDataType.INTEGER, 0);
+            return batch.getRank(0);
+        } else return batch.getRank(id);
     }
 
     public long getScore() {
@@ -71,9 +74,17 @@ public class PlayerBatchInfo {
         this.prestige = prestige;
     }
 
+    public RankStatus getRankStatus(Rank rank) {
+        if (rank.getID() <= current.getID()) return RankStatus.Purchased;
+        if (rank.areRequirementsMet(ranked.player, true)) return RankStatus.Affordable;
+        return RankStatus.Unaffordable;
+    }
+
     public PlaceholderItemStack getRankItem(Rank rank) {
-        if (rank.getID() >= current.getID()) return rank.getActiveItem();
-        if (rank.areRequirementsMet(ranked.player, true)) return rank.getAvailableItem();
-        return rank.getUnavailableItem();
+        return switch (getRankStatus(rank)) {
+            case Affordable -> rank.getActiveItem();
+            case Unaffordable -> rank.getUnavailableItem();
+            case Purchased -> rank.getAvailableItem();
+        };
     }
 }
