@@ -82,8 +82,9 @@ public class Rank {
     public void rankup(Player player) {
         PlayerBatchInfo info = RankedPlayer.get(player).getBatchInfo(batch);
 
-        if (info.getRank() != getPrevious()) getPrevious().rankup(player);
-        if (info.getRank() != getPrevious()) return;
+        Rank previous = getPrevious();
+        if (previous != null && info.getRank() != previous) getPrevious().rankup(player);
+        if (previous != null && info.getRank() != getPrevious()) return;
         if (this.areRequirementsMet(player, true)) {
             moneyRequirement.effect(player);
             requirements.forEach(requirement -> requirement.effect(player));
