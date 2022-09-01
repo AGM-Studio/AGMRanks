@@ -14,11 +14,11 @@ Slots:
   Border:
     Slots: [
         0-0 ,   1-1 ,  2-2 ,  3-3 ,  4-4 ,  5-5 ,  6-6 ,  7-7 ,  8-8 ,
-        9-1 ,  10-2 , 11-3 , 12-4 , 13-5 , 14-6 , 15-7 , 16-8 , 17-9 ,
+        9-1 ,         11-3 , 12-4 , 13-5 , 14-6 , 15-7 ,        17-9 ,
         18-2 , 19-3 , 20-4 , 21-5 , 22-6 , 23-7 , 24-8 , 25-9 , 26-10,
         27-3 , 28-4 , 29-5 , 30-6 , 31-7 , 32-8 , 33-9 , 34-10, 35-11,
         36-4 , 37-5 , 38-6 , 39-7 , 40-8 , 41-9 , 42-10, 43-11, 44-12,
-        45-5 , 46-6 , 47-7 , 48-8 , 49-9 , 50-10, 51-11, 52-12, 53-13
+        45-5 , 46-6 , 47-7 , 48-8 ,        50-10, 51-11, 52-12, 53-13
     ]
     Items:
       - '12xAGMRanks:RedBorder'
@@ -27,11 +27,17 @@ Slots:
     Slots: [ 49 ]
     Items: [ Menu ]
   Accept:
-    Slots: [ 10 ]
+    Slots: [ 10-2 ]
     Items: [ Accept ]
+    AltItems:
+      - '12xAGMRanks:RedBorder'
+      - '3xAGMRanks:BlueBorder'
   Cancel:
-    Slots: [ 16 ]
+    Slots: [ 16-8 ]
     Items: [ Cancel ]
+    AltItems:
+      - '12xAGMRanks:RedBorder'
+      - '3xAGMRanks:BlueBorder'
 
 Items:
   Menu:
