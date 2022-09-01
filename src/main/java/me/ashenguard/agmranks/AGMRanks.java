@@ -74,10 +74,10 @@ public final class AGMRanks extends SpigotPlugin {
             try {
                 messenger.debug("Ranks", String.format("Loading batch '§6%s§r'...", file.getName()));
                 RankBatch batch = RankBatch.from(file);
-                messenger.debug("Ranks", String.format("Batch '§6%s§r' loaded with %d ranks in it.", file, batch.getRanks().size()));
+                messenger.debug("Ranks", String.format("Batch '§6%s§r' loaded with %d ranks in it.", file.getName(), batch.getRanks().size()));
                 batches.add(batch);
             } catch (Throwable throwable) {
-                messenger.handleException(String.format("Loading batch '%s' caused an exception", file), throwable);
+                messenger.handleException(String.format("Loading batch '%s' caused an exception", file.getName()), throwable);
             }
         });
     }
