@@ -21,7 +21,7 @@ ActiveItem:
   CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTVjZWQ5OTMxYWNlMjNhZmMzNTEzNzEzNzliZjA1YzYzNWFkMTg2OTQzYmMxMzY0NzRlNGU1MTU2YzRjMzcifX19
   Name: '%NAME%'
   Lore:
-    - '§7You have received this rank!'
+    - '&7You have received this rank!'
 
 # This item will be used when player has not reached this rank, But has met all requirements! Not usable for 1st rank.
 # Pro-Tip: List some or all the rewards player gain with this rank!
@@ -29,7 +29,7 @@ AvailableItem:
   CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzkxZDQ2ZjE4NDQzNDFiYzk0ZDFmOGY0NTE5ZDNmN2M2ZTJmYTcxOGI2NjRiOTM1NjYxYTI3ODJhNjcwZTIifX19
   Name: '%NAME%'
   Lore:
-    - '§7You may receive this rank now!'
+    - '&7You may receive this rank now!'
 
 # This item will be used when player has not reached this rank and do not meet all the requirements. Not usable for 1st rank.
 # Pro-Tip: Mention all the requirements of this rank using placeholders!
@@ -37,7 +37,7 @@ UnavailableItem:
   CustomHead: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTVmM2EzYmU4YWJiY2E4ODU0ODA5YjVkYzQwMDNlY2QzYjA1YTAyNjI0NzNiNThjNmM0ZTAzZDNkNjY3OTczYyJ9fX0=
   Name: '%NAME%'
   Lore:
-    - '§7You do not meet the requirements of this rank!'
+    - '&7You do not meet the requirements of this rank!'
 
 # This list of items will only be listed in the rank GUI
 RewardItems: []

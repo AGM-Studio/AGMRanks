@@ -8,6 +8,7 @@ import me.ashenguard.api.itemstack.ItemLibrary;
 import me.ashenguard.api.messenger.Messenger;
 import me.ashenguard.api.placeholder.Translations;
 import me.ashenguard.api.spigot.SpigotPlugin;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -60,7 +61,7 @@ public final class AGMRanks extends SpigotPlugin {
     public static final Predicate<String> BATCH_NAME_PATTERN = Pattern.compile("^[a-z][a-z\\d]*$").asPredicate();
     private static final Set<RankBatch> batches = new HashSet<>();
 
-    private void loadBatches() {
+    public void loadBatches() {
         batches.clear();
 
         final File folder = new File(AGMRanks.getInstance().getDataFolder(), "ranks");
@@ -80,6 +81,8 @@ public final class AGMRanks extends SpigotPlugin {
                 messenger.handleException(String.format("Loading batch '%s' caused an exception", file.getName()), throwable);
             }
         });
+
+        Bukkit.getScheduler().runTaskTimer(AGMRanks.getInstance(), () -> batches.forEach(RankBatch::autoRankup), 0, 600);
     }
 
     public static Set<RankBatch> getBatches() {

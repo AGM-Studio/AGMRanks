@@ -34,10 +34,12 @@ public class AGMRanksCommand extends AGMCommand {
 
     @AGMSubcommandHandler("create batch")
     public void createBatch(CommandSender sender, String id, String name) {
+        AGMCommandException.check(this, id != null, Messages.InvalidBatchNameError);
         AGMCommandException.check(this, AGMRanks.BATCH_NAME_PATTERN.test(id), Messages.InvalidBatchNameError);
         AGMCommandException.check(this, AGMRanks.getBatch(id) == null, Messages.BatchExistsError);
 
         RankBatch.create(id, name);
+        AGMRanks.getInstance().loadBatches();
 
         plugin.messenger.response(sender, Messages.RankBatchCreated);
     }

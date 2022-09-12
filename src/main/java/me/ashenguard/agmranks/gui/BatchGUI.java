@@ -72,6 +72,8 @@ public class BatchGUI extends GUIInventory {
             placeholders.add(new Placeholder("batch_name", (p, s) -> this.batch.getName()));
             placeholders.add(new Placeholder("count_ranks", (p, s) -> String.valueOf(this.batch.getRanks().size())));
             placeholders.add(new Placeholder("current_rank", (p, s) -> this.info.getRank().getName()));
+
+            update();
         }
 
         public void setCenter(Rank center) {
@@ -86,8 +88,8 @@ public class BatchGUI extends GUIInventory {
             this.slots.clear();
             this.slots.putAll(getSlotMapFor(getPlayer()));
 
-            int start = center.getID() - ((slots.size() + 1) / 2 - 1);
-            for (int i = 0; i < slots.size(); i++) {
+            int start = center.getID() - ((emptySlots.size() + 1) / 2 - 1);
+            for (int i = 0; i < emptySlots.size(); i++) {
                 int slot = emptySlots.get(i);
                 Rank rank = batch.getRank(i + start);
                 if (rank != null) {

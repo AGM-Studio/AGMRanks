@@ -54,9 +54,7 @@ public class BatchMenuGUI extends GUIInventory {
             int index = slots.get(i);
             RankBatch batch = batches.get(i);
             GUIInventorySlot slot = new GUIInventorySlot("Batch", index).addItem(batch.getIcon());
-            slot.setAction(GUIInventorySlot.Action.fromConsumer((event) -> {}
-                    // BatchGUI.show(player, batch)
-            ));
+            slot.setAction(GUIInventorySlot.Action.fromConsumer((event) -> BatchGUI.show(player, batch)));
             map.put(index, slot);
         }
 

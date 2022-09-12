@@ -11,7 +11,8 @@ public enum Messages implements Message {
 
     PlayerNotFoundError("§cPlayer not found."),
     // Rank Messages
-    RankBatchCreated("The batch with the default rank has been created.");
+    RankBatchCreated("The batch with the default rank has been created."),
+    RankedUp("You have been ranked up.");
 
     private final String path;
     private final String value;

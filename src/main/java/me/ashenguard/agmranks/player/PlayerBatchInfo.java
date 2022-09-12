@@ -82,9 +82,9 @@ public class PlayerBatchInfo {
 
     public PlaceholderItemStack getRankItem(Rank rank) {
         return switch (getRankStatus(rank)) {
-            case Affordable -> rank.getActiveItem();
+            case Purchased -> rank.getActiveItem();
             case Unaffordable -> rank.getUnavailableItem();
-            case Purchased -> rank.getAvailableItem();
+            case Affordable -> rank.getAvailableItem();
         };
     }
 }

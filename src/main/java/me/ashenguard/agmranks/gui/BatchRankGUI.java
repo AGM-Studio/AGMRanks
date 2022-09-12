@@ -70,10 +70,15 @@ public class BatchRankGUI extends GUIInventory {
             case "Accept", "Cancel" -> inv -> {
                 RankInventory inventory = (RankInventory) inv;
                 PlayerBatchInfo info = RankedPlayer.get(inv.getPlayer()).getBatchInfoOf(inventory.rank);
-                return RankStatus.Affordable == info.getRankStatus(inventory.rank);
+                return RankStatus.Affordable != info.getRankStatus(inventory.rank);
             };
             default -> null;
         };
+    }
+
+    @Override
+    public GUIPlayerInventory getGUIPlayerInventory(Player player, Object... extras) {
+        return new RankInventory(this, player, extras);
     }
 
     public class RankInventory extends GUIPlayerInventory {

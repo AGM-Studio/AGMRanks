@@ -7,7 +7,7 @@ Sorting: 0
 # The item to be showed in batch menu
 Icon:
   Material: DIAMOND_SWORD
-  Name: '§6%NAME%'
+  Name: '&6%NAME%'
 
 # Required permission to allow players access this batch!
 Permission: ''

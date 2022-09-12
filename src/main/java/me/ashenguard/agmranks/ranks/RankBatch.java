@@ -39,7 +39,7 @@ public class RankBatch {
     private final String SCORE_PDC_KEY, RANK_PDC_KEY, HIGHRANK_PDC_KEY, PRESTIGE_PDC_KEY;
 
     private static Configuration getConfig(String filename, String name) {
-        return new Configuration(AGMRanks.getInstance(), String.format("ranks/%s/config.yml", filename), "templates/batch-template.yml", new Placeholder("NAME", (p, s) -> name));
+        return new Configuration(AGMRanks.getInstance(), String.format("ranks/%s/config.yml", filename), "templates/batch-config.yml", new Placeholder("NAME", (p, s) -> name));
     }
 
     public static RankBatch from(File folder) {
@@ -71,12 +71,9 @@ public class RankBatch {
         SCORE_PDC_KEY = String.format("ranking_%s_score", this.id);
         HIGHRANK_PDC_KEY = String.format("ranking_%s_highrank", this.id);
         PRESTIGE_PDC_KEY = String.format("ranking_%s_prestige", this.id);
-
-        Bukkit.getScheduler().runTaskTimer(AGMRanks.getInstance(), this::autoRankup, 0, 600);
     }
 
     public static RankBatch create(String id, String name) {
-        Configuration config = getConfig(id, name);
         File folder = new File(AGMRanks.getInstance().getDataFolder(), String.format("ranks/%s", id));
 
         RankBatch batch = new RankBatch(folder);
@@ -172,11 +169,11 @@ public class RankBatch {
         }
     }
 
-    private void autoRankup() {
+    public void autoRankup() {
         Bukkit.getOnlinePlayers().forEach(player -> {
             PlayerBatchInfo info = RankedPlayer.get(player).getBatchInfo(this);
+            if (info == null) return;
 
-            if (!this.hasPermission(player)) return;
             Rank rank = info.getRank();
             if (rank == null) {
                 rank = this.getRank(0);
